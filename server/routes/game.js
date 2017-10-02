@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const userService = require('../services/user');
 const gameService = require('../services/game');
 
-router.post('/', (req, res) => {
-  console.log('settings');
+router.use(bodyParser.json()).post('/', (req, res) => {
+  console.log(req.body.token);
 });
 
 module.exports = router;

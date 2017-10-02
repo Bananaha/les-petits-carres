@@ -2,10 +2,10 @@ var myApp = angular.module('app', ['ui.router']);
 
 myApp.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/login');
-  $stateProvider.state('settings', {
-    url: '/settings',
-    templateUrl: '/templates/settings',
-    controller: 'settingsController as settingsController'
+  $stateProvider.state('game', {
+    url: '/game',
+    templateUrl: '/templates/game',
+    controller: 'gameController as gameController'
   });
   $stateProvider.state('login', {
     url: '/login',

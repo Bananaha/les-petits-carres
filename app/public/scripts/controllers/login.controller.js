@@ -7,7 +7,7 @@ myApp.controller('loginController', [
       loginService
         .login($scope.mail, $scope.password)
         .then(function(res) {
-          $state.go('settings');
+          $state.go('game');
         })
         .catch(function(err) {
           console.log('controller fail', err);

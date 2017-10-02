@@ -18,7 +18,7 @@ function findEmpty() {
     return room.full === false;
   });
 }
-
+// checker si user est déjà dans une room
 function enter(user) {
   let availableRoom = findEmpty();
 

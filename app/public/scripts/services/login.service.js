@@ -11,6 +11,15 @@ myApp.factory('loginService', [
           localStorage.setItem('token', res.data.token);
         });
     }
+    function getToken() {
+      console.log(localStorage.getItem('token'));
+      return localStorage.getItem('token');
+    }
+    function syncToken() {
+      return $http.post('/api/game', {
+        token: getToken()
+      });
+    }
 
     return {
       login: login
