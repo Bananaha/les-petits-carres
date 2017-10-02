@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    title Document
+    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/styles/main.css")
+
+  body(ng-app="app")
+    div(ui-view="")
+    script(src="scripts/angular.min.js")
+    script(src="scripts/angular-ui-router.min.js")
+    script(src="scripts/app.js")
+    script(src="scripts/controllers/login.controller.js")
+    script(src="scripts/controllers/settings.controller.js")
+    script(src="scripts/services/login.service.js")
+    script(src="scripts/services/settings.service.js")

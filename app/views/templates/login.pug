@@ -1,0 +1,9 @@
+h1 Small squares
+p Créez un compte ou connectez vous
+form.form-inline(ng-submit="loginController.onSubmit()")
+    p {{errorMessage}}
+    label.mr-sm-2.mb-0.sr-only(for='mail') Mail
+    input#mail.form-control.mr-sm-2.mb-2.mb-sm-0(type='email', name='mail', placeholder='Adresse mail' ng-model='mail')
+    label.mr-sm-2.mb-0.sr-only(for='password') Password
+    input#password.form-control.mr-sm-2.mb-2.mb-sm-0(type='password', name='password', placeholder='Mot de passe' ng-model='password')
+    button.btn.btn-primary.mt-2.mt-sm-0(type='submit') Submit
