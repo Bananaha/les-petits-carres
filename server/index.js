@@ -1,8 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-
-const router = require('express').Router();
 
 const db = require('./mongo-server');
 const login = require('./routes/login');
@@ -34,9 +31,10 @@ const server = app.listen(PORT, () => {
 
 const io = require('socket.io')(server);
 const socketServer = require('./socket')(io);
+
 db.connect(URL, (error, db) => {
   if (error) {
-    console.log('impossible de se connecter');
+    console.log('impossible de se connecter à MongoDB');
   } else {
     mydb = db;
   }

@@ -1,6 +1,5 @@
 myApp.factory('gameService', [
-  '$http',
-  function($http) {
+  function(socketService) {
     return {};
   }
 ]);

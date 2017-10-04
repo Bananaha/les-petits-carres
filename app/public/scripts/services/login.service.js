@@ -9,16 +9,10 @@ myApp.factory('loginService', [
         })
         .then(function(res, req) {
           localStorage.setItem('token', res.data.token);
+        })
+        .catch(function() {
+          console.log("erreur dans l'ajout du token");
         });
-    }
-    function getToken() {
-      console.log(localStorage.getItem('token'));
-      return localStorage.getItem('token');
-    }
-    function syncToken() {
-      return $http.post('/api/game', {
-        token: getToken()
-      });
     }
 
     return {

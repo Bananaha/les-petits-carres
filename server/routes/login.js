@@ -18,12 +18,6 @@ router.use(bodyParser.json()).post('/', (req, res) => {
   } catch (err) {
     res.status(403).send('bad credentials');
   }
-  const room = gameService.enter(logInUser);
-  try {
-    console.log('joueur créé');
-  } catch (err) {
-    console.log('erreur');
-  }
 });
 
 module.exports = router;

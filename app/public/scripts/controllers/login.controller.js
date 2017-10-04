@@ -16,4 +16,3 @@ myApp.controller('loginController', [
     };
   }
 ]);
-// si la connection dès le serveur, regarder si on peut rejoindre une partie sinon en créer un, renvoyer l'id du joueur et de la partie

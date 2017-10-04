@@ -28,11 +28,25 @@ function login({ mail, password }) {
   if (!user) {
     user = create({ mail, password });
   }
+
   return user;
 }
 
+function findUser(token) {
+  const matchingUser = users.find(user => {
+    return user.id === token;
+  });
+  if (matchingUser) {
+    return matchingUser;
+  } else {
+    // throw Error('401');
+  }
+}
+
 module.exports = {
-  login
+  login,
+  users,
+  findUser
 };
 
 // gérer le fait que l'utilisateur essaye de se connecter alors qu'il est déjà en ligne

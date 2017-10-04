@@ -1,12 +1,5 @@
-const uuidv4 = require('uuid/v4');
-
-const players = [];
-
-const LOGINMESSAGE = [
-  'Aucun joueur en ligne',
-  'Il y a un joueur en ligne',
-  'Veuillez attendre la fin de la session pour jouer'
-];
+const userService = require('./services/user');
+const gameService = require('./services/game');
 
 const random = (min, max) => {
   min = Math.ceil(min);
@@ -15,7 +8,39 @@ const random = (min, max) => {
 };
 
 module.exports = io => {
-  io.on('connection', socket => {});
+  io.on('connection', socket => {
+    socket.on('syncToken', data => {
+      const receivedToken = data.token;
+
+      if (receivedToken) {
+        const user = userService.findUser(receivedToken);
+        const room = gameService.checkRoom(user);
+        const roomId = room.id;
+        let message;
+
+        socket.join(roomId);
+
+        if (room.players.length < 2) {
+          message = "Patientez jusqu'à l'arrivée d'un joueur";
+          io.to(roomId).emit('tokenConfirmed', {
+            player1: user.mail,
+            message: message
+          });
+        } else {
+          message = 'La partie va commencer';
+          io.to(roomId).emit('tokenConfirmed', {
+            player1: room.players[0].mail,
+            player2: user.mail
+          });
+        }
+      } else {
+        socket.emit('tokenNotFound', {
+          message:
+            'Une authentification est nécessaire pour accéder à la ressource.'
+        });
+      }
+    });
+  });
 };
 
 // console.log('new connection');
