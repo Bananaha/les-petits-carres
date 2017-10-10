@@ -1,26 +1,47 @@
 myApp.controller('gameController', [
   '$scope',
   '$state',
-  'gameService',
   'tokenService',
   'socketService',
-  function($scope, $state, gameService, tokenService, socketService) {
-    const clientToken = tokenService.getToken().then(function(res) {
-      $scope;
+  function($scope, $state, tokenService, socketService) {
+    socketService.connect();
+    var token = tokenService.getToken();
+    if (token) {
+      socketService.emit('sendToken', token);
+    } else {
+      $state.go('login');
+    }
+
+    socketService.on('justOneGamer', function(data) {
+      $scope.gameMessage = data.message;
+      $scope.player1 = data.player1;
+      $scope.player1Style = {
+        color: data.color
+      };
     });
 
-    socketService.emit('syncToken', {
-      token: clientToken
-    });
-    socketService.on('tokenConfirmed', function(data) {
+    socketService.on('initGame', function(data) {
       $scope.player1 = data.player1;
+      $scope.player1Style = {
+        color: data.colorPlayer1
+      };
       $scope.player2 = data.player2;
+      $scope.player2Style = {
+        color: data.colorPlayer2
+      };
       $scope.gameMessage = data.message;
     });
-    socketService.on('tokenNotFound', function(data) {
-      $scope.gameMessage = data.message;
-      $state.go('login');
-    });
+    // this.onClick = function(event) {
+    //   var canvas = event.currentTarget.getBoundingClientRect();
+
+    //   socketService.emit('canvasClicked', {
+    //     clientX: event.x - canvas.left,
+    //     clientY: event.y - canvas.top
+    //   });
+    // };
+    // socketService.on('allowedToPlay', function(data) {
+    //   console.log(data);
+    // });
   }
 ]);
 

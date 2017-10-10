@@ -1,5 +1,10 @@
 myApp.factory('socketService', function($rootScope) {
-  var socket = io.connect();
+  var socket;
+
+  function connect() {
+    return (socket = io.connect());
+  }
+  // var socket = io.connect();
 
   function on(eventName, callback) {
     socket.on(eventName, function() {
@@ -30,6 +35,7 @@ myApp.factory('socketService', function($rootScope) {
   }
 
   return {
+    connect: connect,
     on: on,
     emit: emit
   };

@@ -35,11 +35,11 @@ function findEmpty() {
 function join(user) {
   // rechercher une room incomplète
   let availableRoom = findEmpty();
-
   // si toute les rooms sont complètes ou qu'il n'en existe pas, création d'une room
   if (!availableRoom) {
     availableRoom = create(user);
   }
+
   // attribution d'une nouvelle propriété au joueur contenant l'id de la room créée.
   user.roomId = availableRoom.id;
 
@@ -56,7 +56,7 @@ function join(user) {
 
 function checkRoom(user) {
   // vérifier que le joueur a une propriété roomId, si c'est le cas, on retourne l'id de la room à laquelle il dépend
-  if (!user.roomId) {
+  if (!user || !user.roomId) {
     // sinon on le fait entrer dans une room
     return join(user);
   } else {

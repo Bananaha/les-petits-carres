@@ -1,5 +1,1 @@
-myApp.factory('gameService', [
-  function(socketService) {
-    return {};
-  }
-]);
+myApp.factory('gameService', [function() {}]);

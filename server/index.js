@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const db = require('./mongo-server');
+const db = require('./services/mongo-server');
 const login = require('./routes/login');
 const game = require('./routes/game');
 const templates = require('./routes/templates');
@@ -12,7 +12,7 @@ let myDb;
 
 const HOST = 'localhost';
 const URL = 'mongodb://localhost:27017/littleSquares';
-const PORT = 8888;
+const PORT = 5000;
 
 app
   .set('view engine', 'pug')
@@ -30,7 +30,7 @@ const server = app.listen(PORT, () => {
 });
 
 const io = require('socket.io')(server);
-const socketServer = require('./socket')(io);
+const socketServer = require('./services/socket')(io);
 
 db.connect(URL, (error, db) => {
   if (error) {
