@@ -31,17 +31,6 @@ myApp.controller('gameController', [
       };
       $scope.gameMessage = data.message;
     });
-    // this.onClick = function(event) {
-    //   var canvas = event.currentTarget.getBoundingClientRect();
-
-    //   socketService.emit('canvasClicked', {
-    //     clientX: event.x - canvas.left,
-    //     clientY: event.y - canvas.top
-    //   });
-    // };
-    // socketService.on('allowedToPlay', function(data) {
-    //   console.log(data);
-    // });
   }
 ]);
 

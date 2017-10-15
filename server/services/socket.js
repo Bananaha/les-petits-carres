@@ -13,7 +13,6 @@ const FENCE_SIZE = {
 const coord = [];
 const squares = [];
 const fences = [];
-const fenceConfig = {};
 
 // Functions
 const random = (min, max) => {
@@ -40,61 +39,87 @@ const togglePlayerTurn = room => {
   });
 };
 
-const setGameVariables = function(coord, squares) {
+const setGameVariables = function() {
+  let squareId = 0;
   for (var x = 0; x < GAME_SIZE; x = x + SQUARE_SIZE) {
     coord.push(x);
 
     for (var y = 0; y < GAME_SIZE; y = y + SQUARE_SIZE) {
       var squareOrigin = {
         xPos: x,
-        yPos: y
+        yPos: y,
+        id: squareId
       };
       squares.push(squareOrigin);
+      squareId++;
     }
   }
   coord.push(coord[coord.length - 1] + SQUARE_SIZE);
 };
 
-var findAttachedSquare = function(fenceConfig) {
+var findAttachedSquare = function(fence, user) {
+  let squareA, squareB;
+
   // trait horizontal
   //Si la hauteur du coté cliqué est également à fenceShortSide (petite hauteur), alors il s'agît d'un trait horizontal
-  if (fenceConfig.h === FENCE_SIZE.shortSide) {
-    console.log('trait H');
+  if (fence.h === FENCE_SIZE.shortSide) {
     // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
-    squares.forEach(square => {
+    for (let i = 0, len = squares.length; i < len; i++) {
       if (
-        square.xPos === fenceConfig.x &&
-        square.yPos === fenceConfig.y + FENCE_SIZE.shortSide
+        squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
+        squares[i].yPos === fence.y
       ) {
-        square.fenceTop = true;
+        squares[i].fenceTop = user.mail;
+        if (Object.keys(squares[i]).length === 7) {
+          squares[i].isComplete = user.mail;
+          squaresrs[i].color = user.color;
+        }
+        squareA = squares[i];
       }
       if (
-        square.xPos === fenceConfig.x &&
-        square.yPos === fenceConfig.y + FENCE_SIZE.shortSide - SQUARE_SIZE
+        squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
+        squares[i].yPos === fence.y - SQUARE_SIZE
       ) {
-        square.fenceBottom = true;
+        squares[i].fenceBottom = user.mail;
+        if (Object.keys(squares[i]).length === 7) {
+          squares[i].isComplete = user.mail;
+          squares[i].color = user.color;
+        }
+        squareB = squares[i];
       }
-    });
+    }
   }
   // trait vertical
   //Si la hauteur du coté cliqué est également à intervalBetween - fenceShortSide (grande hauteur), alors il s'agît d'un trait vertical
-  if (fenceConfig.h === SQUARE_SIZE - FENCE_SIZE.shortSide) {
-    squares.forEach(function(square) {
+  if (fence.h === SQUARE_SIZE - FENCE_SIZE.shortSide) {
+    for (let i = 0, len = squares.length; i < len; i++) {
       // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
+
       if (
-        square.xPos === fenceConfig.x + FENCE_SIZE.shortSide &&
-        square.yPos === fenceConfig.y
+        squares[i].xPos === fence.x &&
+        squares[i].yPos === fence.y - FENCE_SIZE.shortSide
       ) {
-        square.fenceLeft = true;
+        squares[i].fenceLeft = user.mail;
+        if (Object.keys(squares[i]).length === 7) {
+          squares[i].isComplete = user.mail;
+          squares[i].color = user.color;
+        }
+        squareA = squares[i];
       }
       if (
-        square.xPos === fenceConfig.x + FENCE_SIZE.shortSide - SQUARE_SIZE &&
-        square.yPos === fenceConfig.y
+        squares[i].xPos === fence.x - SQUARE_SIZE &&
+        squares[i].yPos === fence.y - FENCE_SIZE.shortSide
       ) {
-        square.fenceRight = true;
+        squares[i].fenceRight = user.mail;
+        if (Object.keys(squares[i]).length === 7) {
+          squares[i].isComplete = user.mail;
+          squares[i].color = user.color;
+        }
+        squareB = squares[i];
       }
-    });
+    }
   }
+  return [squareA, squareB];
 };
 
 // Sockets
@@ -126,24 +151,26 @@ module.exports = io => {
 
         const beginner = firstToPlay(room, user);
 
-        // togglePlayerTurn(room);
-
         io.to(roomId).emit('initGame', {
           player1: room.players[0].mail,
           colorPlayer1: room.players[0].color,
+          scorePlayer1: room.players[0].score,
           player2: user.mail,
           colorPlayer2: user.color,
+          scorePlayer2: user.score,
           message: beginner + ' commence à jouer'
         });
       }
     });
 
     socket.on('canvasClicked', data => {
+      const fenceConfig = {};
       console.log(user.turnToPlay);
       if (!user.turnToPlay) {
         console.log(user.mail, 'not your turn');
         return;
       } else {
+        let squaresChanged;
         coord.forEach(function(xPos) {
           coord.forEach(function(yPos) {
             // trait vertical
@@ -157,7 +184,7 @@ module.exports = io => {
               fenceConfig.x = xPos;
               fenceConfig.w = FENCE_SIZE.shortSide;
               fenceConfig.h = SQUARE_SIZE - FENCE_SIZE.shortSide;
-              fenceConfig.owner = user.id;
+              fenceConfig.owner = user.mail;
             }
             // trait horizontal
             if (
@@ -170,7 +197,7 @@ module.exports = io => {
               fenceConfig.x = xPos + FENCE_SIZE.shortSide;
               fenceConfig.w = SQUARE_SIZE - FENCE_SIZE.shortSide;
               fenceConfig.h = FENCE_SIZE.shortSide;
-              fenceConfig.owner = user.id;
+              fenceConfig.owner = user.mail;
             }
           });
         });
@@ -182,33 +209,54 @@ module.exports = io => {
           if (fences.length === 0) {
             fenceConfig.color = user.color;
             fences.push(fenceConfig);
-            findAttachedSquare(fenceConfig);
+            squaresChanged = findAttachedSquare(fenceConfig, user);
           } else {
             // Si des traits ont déjà été ajoutés au tableau regroupant les traits valides, on regarde si les coordonnées du trait sont déjà prises.
-
             function fenceAlreadyDrawn(existingFence) {
               return (
                 existingFence.x === fenceConfig.x &&
-                existingFence.y === fenceConfig.x &&
+                existingFence.y === fenceConfig.y &&
                 existingFence.w === fenceConfig.w &&
                 existingFence.h === fenceConfig.h
               );
             }
             // Si les coordonnées sont prises, on n'enregistre pas le trait dans le tableau regroupant les traits déjà créés
+
             if (fences.find(fenceAlreadyDrawn)) {
               return;
             } else {
               //Sinon on ajoute le trait dans le tableau et vérifie la dépendence de ce trait avec les carrés.
+
               fenceConfig.color = user.color;
               fences.push(fenceConfig);
-              findAttachedSquare(fenceConfig);
+              squaresChanged = findAttachedSquare(fenceConfig, user);
             }
           }
         }
+        let message;
+        const squareIsComplete = squaresChanged.find(square => {
+          return square.isComplete;
+        });
+
+        if (!squareIsComplete) {
+          togglePlayerTurn(room);
+        } else {
+          user.score++;
+          console.log(user);
+          if (user.score + room.players[0].score === 100) {
+            if (user.score > room.players[0].score) {
+              message = user.mail + ' gagne la partie';
+            } else {
+              message = room.players[0].mail + ' gagne la partie';
+            }
+          }
+        }
+
         console.log(user.mail, 'your turn');
-        togglePlayerTurn(room);
         io.to(roomId).emit('allowToPlay', {
-          fenceConfig
+          fenceConfig,
+          squaresChanged,
+          message
         });
       }
     });

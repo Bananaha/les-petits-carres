@@ -20,8 +20,9 @@ myApp.directive('canvas', [
         var fenceShortSide = 2;
         var squareSize = intervalBetween - fenceShortSide;
 
-        function Square(x, y) {
+        function Square(x, y, id) {
           var size = squareSize;
+          this.id = id;
           this.context = context;
           this.xPos = x + fenceShortSide / 2;
           this.yPos = y + fenceShortSide / 2;
@@ -31,24 +32,12 @@ myApp.directive('canvas', [
           this.fenceRight = false;
           this.fenceBottom = false;
           this.fenceLeft = false;
-
-          this.win = function() {
-            if (
-              this.fenceTop &&
-              this.fenceRight &&
-              this.fenceBottom &&
-              this.fenceLeft
-            ) {
-              this.color = 'purple';
-            } else {
-              this.color = 'yellow';
-            }
-          };
+          this.isComplete = false;
+          this.color = 'yellow';
 
           this.render = function() {
             this.context.fillStyle = this.color;
             this.context.fillRect(this.xPos, this.yPos, size, this.height);
-            this.win();
           };
         }
 
@@ -70,6 +59,30 @@ myApp.directive('canvas', [
           };
         }
 
+        function updateSquare(serverSquares) {
+          serverSquares.forEach(function(serverSquare) {
+            var targetClientSquare = squaresArray.find(function(clientSquare) {
+              return clientSquare.id === serverSquare.id;
+            });
+            if (targetClientSquare) {
+              [
+                'fenceTop',
+                'fenceRight',
+                'fenceBottom',
+                'fenceLeft'
+              ].forEach(function(fenceClicked) {
+                if (targetClientSquare.hasOwnProperty(fenceClicked)) {
+                  targetClientSquare[fenceClicked] = serverSquare[fenceClicked];
+                }
+              });
+              if (serverSquare.isComplete) {
+                targetClientSquare.isComplete = serverSquare.isComplete;
+                targetClientSquare.color = serverSquare.color;
+              }
+            }
+          });
+        }
+
         var draw = function() {
           // Dessine les carrés
           context.clearRect(0, 0, 500, 500);
@@ -84,52 +97,13 @@ myApp.directive('canvas', [
           requestAnimationFrame(draw);
         };
 
-        var findAttachedSquare = function(fence) {
-          // trait horizontal
-          //Si la hauteur du coté cliqué est également à fenceShortSide (petite hauteur), alors il s'agît d'un trait horizontal
-          if (fence.height === fenceShortSide) {
-            // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
-            squaresArray.forEach(function(square) {
-              if (
-                square.xPos === fence.xPos &&
-                square.yPos === fence.yPos + fenceShortSide
-              ) {
-                square.fenceTop = true;
-              }
-              if (
-                square.xPos === fence.xPos &&
-                square.yPos === fence.yPos + fenceShortSide - intervalBetween
-              ) {
-                square.fenceBottom = true;
-              }
-            });
-          }
-          // trait vertical
-          //Si la hauteur du coté cliqué est également à intervalBetween - fenceShortSide (grande hauteur), alors il s'agît d'un trait vertical
-          if (fence.height === intervalBetween - fenceShortSide) {
-            squaresArray.forEach(function(square) {
-              // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
-              if (
-                square.xPos === fence.xPos + fenceShortSide &&
-                square.yPos === fence.yPos
-              ) {
-                square.fenceLeft = true;
-              }
-              if (
-                square.xPos === fence.xPos + fenceShortSide - intervalBetween &&
-                square.yPos === fence.yPos
-              ) {
-                square.fenceRight = true;
-              }
-            });
-          }
-        };
-
         socketService.on('gameVariables', function(data) {
           coor = data.coord;
           var squares = data.squares;
+
           squares.forEach(function(square) {
-            var newSquare = new Square(square.xPos, square.yPos);
+            var newSquare = new Square(square.xPos, square.yPos, square.id);
+
             squaresArray.push(newSquare);
           });
         });
@@ -139,6 +113,7 @@ myApp.directive('canvas', [
           function(event) {
             //récupérer la position du click sur le canvas
             var rect = canvas.getBoundingClientRect();
+
             var mousePosX = event.clientX - rect.left;
             var mousePosY = event.clientY - rect.top;
 
@@ -158,9 +133,10 @@ myApp.directive('canvas', [
             data.fenceConfig.h,
             data.fenceConfig.color
           );
-          fencesArray.push(fence);
-        });
 
+          fencesArray.push(fence);
+          updateSquare(data.squaresChanged);
+        });
         draw();
       }
     };

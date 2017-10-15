@@ -19,7 +19,8 @@ function create({ mail, password }) {
     id: uuidv4(),
     mail,
     password,
-    color: randomColor()
+    color: randomColor(),
+    score: 0
   };
   users.push(newUser);
   return newUser;
