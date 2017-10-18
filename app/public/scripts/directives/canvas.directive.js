@@ -61,9 +61,13 @@ myApp.directive('canvas', [
 
         function updateSquare(serverSquares) {
           serverSquares.forEach(function(serverSquare) {
-            var targetClientSquare = squaresArray.find(function(clientSquare) {
-              return clientSquare.id === serverSquare.id;
-            });
+            var targetClientSquare;
+            for (var i = 0, len = squaresArray.length; i < len; i++) {
+              if (squaresArray[i].id === serverSquare.id) {
+                targetClientSquare = squaresArray[i];
+                break;
+              }
+            }
             if (targetClientSquare) {
               [
                 'fenceTop',
@@ -135,6 +139,7 @@ myApp.directive('canvas', [
           );
 
           fencesArray.push(fence);
+          console.log(data.squaresChanged);
           updateSquare(data.squaresChanged);
         });
         draw();
