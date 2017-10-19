@@ -1,18 +1,31 @@
-const games = {};
-
-const initGame = (id, gameSize, squareSize) => {
-  games[id] = {
-    coord: computeSquares(gameSize, squareSize),
-    squares: computeSquares(gameSize, squareSize),
-    fences: []
-  };
+const GAME_SIZE = 500;
+const SQUARE_SIZE = GAME_SIZE / 10;
+const CLICK_TOLERANCE = 5;
+const FENCE_SIZE = {
+  longSide: 46,
+  shortSide: 2
 };
 
-const computeSquares = function(gameSize, squareSize) {
+const games = {};
+
+const createGame = id => {
+  games[id] = {
+    coord: computeCoord(),
+    squares: computeSquares(),
+    fences: []
+  };
+  return games[id];
+};
+
+const getOrCreate = id => {
+  return games[id] || createGame(id);
+};
+
+const computeSquares = function() {
   const squares = [];
   let squareId = 0;
-  for (let x = 0, len = gameSize; x < len; x += squareSize) {
-    for (let y = 0, len = gameSize; y < len; y += squareSize) {
+  for (let x = 0, len = GAME_SIZE; x < len; x += SQUARE_SIZE) {
+    for (let y = 0, len = GAME_SIZE; y < len; y += SQUARE_SIZE) {
       var squareOrigin = {
         xPos: x,
         yPos: y,
@@ -25,9 +38,9 @@ const computeSquares = function(gameSize, squareSize) {
   return squares;
 };
 
-const computeCoord = (gameSize, squareSize) => {
+const computeCoord = () => {
   const coord = [];
-  for (let x = 0, len = gameSize; x < len; x += squareSize) {
+  for (let x = 0, len = GAME_SIZE; x < len; x += SQUARE_SIZE) {
     coord.push(x);
   }
   coord.push(coord[coord.length - 1] + SQUARE_SIZE);
@@ -35,5 +48,5 @@ const computeCoord = (gameSize, squareSize) => {
 };
 
 module.exports = {
-  initGame
+  getOrCreate
 };

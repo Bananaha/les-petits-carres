@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 
 const db = require('./services/mongo-server');
 const login = require('./routes/login');
-const game = require('./routes/game');
 const templates = require('./routes/templates');
 
 const app = express();
@@ -20,7 +19,6 @@ app
   .use(express.static(__dirname + '/../app/public'))
   .use('/templates', templates)
   .use('/api/login', login)
-  .use('/api/game', game)
   .get('/', (req, res) => {
     res.render('index');
   });
