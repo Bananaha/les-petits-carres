@@ -15,7 +15,7 @@ router.use(bodyParser.json()).post('/', (req, res) => {
     const userId = logInUser.id;
     res.send({ token: userId });
   } catch (err) {
-    console.log('fail loginUser in login route');
+    console.log('fail loginUser in login route', err);
     res.status(403).send('bad credentials');
   }
 });

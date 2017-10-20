@@ -14,7 +14,7 @@ const randomColor = () => {
   );
 };
 
-function create({ mail, password }) {
+const create = ({ mail, password }) => {
   const newUser = {
     id: uuidv4(),
     mail,
@@ -24,15 +24,21 @@ function create({ mail, password }) {
   };
   users.push(newUser);
   return newUser;
-}
+};
 
-function getByMail(mail) {
+const getByMail = mail => {
   return users.find(user => {
     return user.mail === mail;
   });
-}
+};
 
-function login({ mail, password }) {
+const findOpponent = mail => {
+  return users.find(user => {
+    return user.mail !== mail;
+  });
+};
+
+const login = ({ mail, password }) => {
   let user = getByMail(mail);
 
   if (user && user.password !== password) {
@@ -43,9 +49,9 @@ function login({ mail, password }) {
     user = create({ mail, password });
   }
   return user;
-}
+};
 
-function findUser(token) {
+const findUser = token => {
   const matchingUser = users.find(user => {
     return user.id === token;
   });
@@ -54,12 +60,13 @@ function findUser(token) {
   } else {
     // throw Error('401');
   }
-}
+};
 
 module.exports = {
   login,
   users,
-  findUser
+  findUser,
+  findOpponent
 };
 
 // gérer le fait que l'utilisateur essaye de se connecter alors qu'il est déjà en ligne

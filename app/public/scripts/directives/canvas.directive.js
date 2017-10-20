@@ -130,6 +130,7 @@ myApp.directive('canvas', [
         );
 
         socketService.on('allowToPlay', function(data) {
+          console.log(data);
           var fence = new Fence(
             data.fenceConfig.x,
             data.fenceConfig.y,

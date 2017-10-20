@@ -6,7 +6,7 @@ const gameService = require('./gameService');
 // Global variables
 const GAME_SIZE = 500;
 const SQUARE_SIZE = GAME_SIZE / 10;
-const CLICK_TOLERANCE = 5;
+const CLICK_TOLERANCE = 7;
 const FENCE_SIZE = {
   longSide: 46,
   shortSide: 2
@@ -61,13 +61,12 @@ const computeFence = (coord, clientData, client, fenceConfig) => {
       }
     });
   });
-  console.log(fenceConfig);
 };
 
 const assignFenceProps = (fence, user, squares, fences) => {
   fence.color = user.color;
   fences.push(fence);
-  squaresChanged = findAttachedSquare(fence, user, squares);
+  return findAttachedSquare(fence, user, squares);
 };
 
 const togglePlayerTurn = room => {
@@ -76,20 +75,22 @@ const togglePlayerTurn = room => {
   });
 };
 
-const changeSquareProps = (square, prop, user, squares) => {
-  square.prop = user.mail;
-  if (Object.keys(squares).length === 7) {
+const squareIsComplete = square =>
+  square.top && square.bottom && square.left && square.right;
+
+const changeSquareProps = (square, targetProp, user, squares) => {
+  square[targetProp] = user.mail;
+  if (squareIsComplete(square)) {
     square.isComplete = user.mail;
     square.color = user.color;
   }
+  return square;
 };
 
 const findAttachedSquare = function(fence, user, squares) {
   let squareA, squareB;
-  console.log('in findAttachedSquare');
   // trait horizontal
   //Si la hauteur du coté cliqué est également à fenceShortSide (petite hauteur), alors il s'agît d'un trait horizontal
-  console.log('first condition', FENCE_SIZE.shortSide, '===', fence.h);
   if (fence.h === FENCE_SIZE.shortSide) {
     // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
     for (let i = 0, len = squares.length; i < len; i++) {
@@ -97,16 +98,25 @@ const findAttachedSquare = function(fence, user, squares) {
         squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
         squares[i].yPos === fence.y
       ) {
-        squareA = changeSquareProps(squares[i], 'top', user);
+        squareA = changeSquareProps(squares[i], 'top', user, squares);
       }
       if (
         squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
         squares[i].yPos === fence.y - SQUARE_SIZE
       ) {
-        squareB = changeSquareProps(squares[i], 'bottom', user);
+        squareB = changeSquareProps(squares[i], 'bottom', user, squares);
       }
     }
   }
+
+  const fenceAlreadyDrawn = existingFence => {
+    return (
+      existingFence.x === fenceConfig.x &&
+      existingFence.y === fenceConfig.y &&
+      existingFence.w === fenceConfig.w &&
+      existingFence.h === fenceConfig.h
+    );
+  };
   // trait vertical
   //Si la hauteur du coté cliqué est également à intervalBetween - fenceShortSide (grande hauteur), alors il s'agît d'un trait vertical
 
@@ -118,19 +128,18 @@ const findAttachedSquare = function(fence, user, squares) {
         squares[i].xPos === fence.x &&
         squares[i].yPos === fence.y - FENCE_SIZE.shortSide
       ) {
-        squareA = changeSquareProps(squares[i], 'left', user);
+        squareA = changeSquareProps(squares[i], 'left', user, squares);
       }
 
       if (
         squares[i].xPos === fence.x - SQUARE_SIZE &&
         squares[i].yPos === fence.y - FENCE_SIZE.shortSide
       ) {
-        squareB = changeSquareProps(squares[i], 'right', user);
+        squareB = changeSquareProps(squares[i], 'right', user, squares);
       }
     }
   }
   let attachedSquares = [];
-
   if (!squareA && squareB) {
     attachedSquares.push(squareB);
   }
@@ -140,7 +149,6 @@ const findAttachedSquare = function(fence, user, squares) {
   if (squareA && squareB) {
     attachedSquares.push(squareA, squareB);
   }
-  console.log(attachedSquares);
   return attachedSquares;
 };
 
@@ -149,7 +157,7 @@ module.exports = io => {
   io.on('connection', socket => {
     console.log('ws connecté');
 
-    let user, room, roomId, game;
+    let user, room, roomId, game, opponent;
 
     socket.on('sendToken', token => {
       user = userService.findUser(token);
@@ -170,7 +178,6 @@ module.exports = io => {
           coord: game.coord,
           squares: game.squares
         });
-
         const beginner = firstToPlay(room, user);
 
         io.to(roomId).emit('initGame', {
@@ -183,66 +190,66 @@ module.exports = io => {
           message: beginner + ' commence à jouer'
         });
       }
+      opponent = userService.findOpponent(user.mail);
+      console.log(opponent);
     });
 
     socket.on('canvasClicked', data => {
       const fenceConfig = {};
       if (!user.turnToPlay) {
-        console.log(user.mail, ' not you');
         return;
       } else {
-        console.log(user.mail, ' you');
         let squaresChanged;
         computeFence(game.coord, data, user, fenceConfig);
 
         if (Object.keys(fenceConfig).length === 0) {
           return;
         }
-        console.log('fenceConfig set', fenceConfig);
         // Si c'est le premier, on regarde quels sont les carrés dont il dépend et on modifie les carrés concernés en conséquence.
         if (game.fences.length === 0) {
-          assignFenceProps(fenceConfig, user, game.squares, game.fences);
-        }
-        // else {
-        //   // Si des traits ont déjà été ajoutés au tableau regroupant les traits valides, on regarde si les coordonnées du trait sont déjà prises.
-        //   function fenceAlreadyDrawn(existingFence) {
-        //     return (
-        //       existingFence.x === fenceConfig.x &&
-        //       existingFence.y === fenceConfig.y &&
-        //       existingFence.w === fenceConfig.w &&
-        //       existingFence.h === fenceConfig.h
-        //     );
-        //   }
-        //   // Si les coordonnées sont prises, on n'enregistre pas le trait dans le tableau regroupant les traits déjà créés
-        //   console.log(game.fences.find(fenceAlreadyDrawn));
-        //   if (game.fences.find(fenceAlreadyDrawn)) {
-        //     console.log('2nd fence');
-        //     return;
-        //   }
-        //   //Sinon on ajoute le trait dans le tableau et vérifie la dépendence de ce trait avec les carrés.
-        //   assignFenceProps(fenceConfig, user, game.squares);
-        // }
-        // let message;
-        // const squareIsComplete = squaresChanged.find(square => {
-        //   return square.isComplete;
-        // });
+          squaresChanged = assignFenceProps(
+            fenceConfig,
+            user,
+            game.squares,
+            game.fences
+          );
+        } else {
+          // Si des traits ont déjà été ajoutés au tableau regroupant les traits valides, on regarde si les coordonnées du trait sont déjà prises.
 
-        // if (!squareIsComplete) {
-        //   togglePlayerTurn(room);
-        // } else {
-        //   user.score++;
-        //   if (user.score + room.players[0].score === 100) {
-        //     if (user.score > room.players[0].score) {
-        //       message = user.mail + ' gagne la partie';
-        //     } else {
-        //       message = room.players[0].mail + ' gagne la partie';
-        //     }
-        //   }
-        // }
-        // io.to(roomId).emit('allowToPlay', {
-        //   fenceConfig,
-        //   squaresChanged
-        // });
+          // Si les coordonnées sont prises, on n'enregistre pas le trait dans le tableau regroupant les traits déjà créés
+          if (game.fences.find(fenceAlreadyDrawn)) {
+            return;
+          }
+          //Sinon on ajoute le trait dans le tableau et vérifie la dépendence de ce trait avec les carrés.
+          squaresChanged = assignFenceProps(
+            fenceConfig,
+            user,
+            game.squares,
+            game.fences
+          );
+        }
+        const assignSquareToPlayer = squaresChanged.find(square => {
+          return square.isComplete;
+        });
+        let turn;
+        if (!squareIsComplete) {
+          togglePlayerTurn(room);
+          turn = true;
+        } else {
+          user.score++;
+          if (user.score + room.players[0].score === 100) {
+            if (user.score > room.players[0].score) {
+              message = user.mail + ' gagne la partie';
+            } else {
+              message = room.players[0].mail + ' gagne la partie';
+            }
+          }
+        }
+        io.to(roomId).emit('allowToPlay', {
+          fenceConfig,
+          squaresChanged,
+          turn: assignSquareToPlayer
+        });
       }
     });
   });

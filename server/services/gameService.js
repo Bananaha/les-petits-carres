@@ -1,6 +1,6 @@
 const GAME_SIZE = 500;
 const SQUARE_SIZE = GAME_SIZE / 10;
-const CLICK_TOLERANCE = 5;
+const CLICK_TOLERANCE = 7;
 const FENCE_SIZE = {
   longSide: 46,
   shortSide: 2
@@ -21,7 +21,7 @@ const getOrCreate = id => {
   return games[id] || createGame(id);
 };
 
-const computeSquares = function() {
+const computeSquares = function () {
   const squares = [];
   let squareId = 0;
   for (let x = 0, len = GAME_SIZE; x < len; x += SQUARE_SIZE) {
