@@ -1,5 +1,8 @@
 div
   p(ng-style="player1Style") {{player1}}
+  span(ng-style="player1Style") {{scorePlayer1}}
   p(ng-style="player2Style") {{player2}}
+  span(ng-style="player2Style") {{scorePlayer2}}
   canvas#canvas(canvas ng-click="gameController.onClick($event)")
   p {{gameMessage}}
+  

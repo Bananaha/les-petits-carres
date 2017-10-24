@@ -39,7 +39,7 @@ function join(user) {
   if (!availableRoom) {
     availableRoom = create(user);
   }
-
+  console.log(availableRoom.players);
   // attribution d'une nouvelle propriété au joueur contenant l'id de la room créée.
   user.roomId = availableRoom.id;
 

@@ -4,4 +4,8 @@ form.form-inline(ng-submit="loginController.onSubmit()")
     p {{errorMessage}}
     input.form-control.mr-sm-2.mb-2.mb-sm-0(type='email', name='mail', placeholder='Adresse mail' ng-model='mail')
     input.form-control.mr-sm-2.mb-2.mb-sm-0(type='password', name='password', placeholder='Mot de passe' ng-model='password')
+    select(ng-model="selectedAvatar" ng-options="avatar for avatar in avatarsList" ng-change="update(avatar)")
+      option --Selectionnez un avatar--
+    .img(ng-class="selectedAvatar+'-img'")
+    img(src="../public/assets/avatars/elephant.png", alt="", srcset="")
     button.btn.btn-primary.mt-2.mt-sm-0(type='submit') Submit

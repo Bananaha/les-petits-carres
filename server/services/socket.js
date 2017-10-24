@@ -1,6 +1,6 @@
 // Modules
-const userService = require('./user');
-const roomService = require('./room');
+const userService = require('./userService');
+const roomService = require('./roomService');
 const gameService = require('./gameService');
 
 // Global variables
@@ -109,14 +109,6 @@ const findAttachedSquare = function(fence, user, squares) {
     }
   }
 
-  const fenceAlreadyDrawn = existingFence => {
-    return (
-      existingFence.x === fenceConfig.x &&
-      existingFence.y === fenceConfig.y &&
-      existingFence.w === fenceConfig.w &&
-      existingFence.h === fenceConfig.h
-    );
-  };
   // trait vertical
   //Si la hauteur du coté cliqué est également à intervalBetween - fenceShortSide (grande hauteur), alors il s'agît d'un trait vertical
 
@@ -164,7 +156,6 @@ module.exports = io => {
       room = roomService.checkRoom(user);
       roomId = room.id;
       socket.join(roomId);
-
       game = gameService.getOrCreate(roomId);
 
       if (room.players.length < 2) {
@@ -174,13 +165,18 @@ module.exports = io => {
           message: "Patientez jusqu'à l'arrivée d'un joueur"
         });
       } else {
-        io.to(roomId).emit('gameVariables', {
-          coord: game.coord,
-          squares: game.squares
-        });
         const beginner = firstToPlay(room, user);
 
+        socket.emit('turn', {
+          turn: user.turnToPlay
+        });
+        socket.broadcast.to(roomId).emit('turn', {
+          turn: room.players[0].turnToPlay
+        });
+
         io.to(roomId).emit('initGame', {
+          coord: game.coord,
+          squares: game.squares,
           player1: room.players[0].mail,
           colorPlayer1: room.players[0].color,
           scorePlayer1: room.players[0].score,
@@ -190,8 +186,6 @@ module.exports = io => {
           message: beginner + ' commence à jouer'
         });
       }
-      opponent = userService.findOpponent(user.mail);
-      console.log(opponent);
     });
 
     socket.on('canvasClicked', data => {
@@ -215,7 +209,14 @@ module.exports = io => {
           );
         } else {
           // Si des traits ont déjà été ajoutés au tableau regroupant les traits valides, on regarde si les coordonnées du trait sont déjà prises.
-
+          const fenceAlreadyDrawn = existingFence => {
+            return (
+              existingFence.x === fenceConfig.x &&
+              existingFence.y === fenceConfig.y &&
+              existingFence.w === fenceConfig.w &&
+              existingFence.h === fenceConfig.h
+            );
+          };
           // Si les coordonnées sont prises, on n'enregistre pas le trait dans le tableau regroupant les traits déjà créés
           if (game.fences.find(fenceAlreadyDrawn)) {
             return;
@@ -228,29 +229,41 @@ module.exports = io => {
             game.fences
           );
         }
-        const assignSquareToPlayer = squaresChanged.find(square => {
-          return square.isComplete;
+        let winSquares = 0;
+        squaresChanged.forEach(square => {
+          if (square.isComplete) {
+            winSquares++;
+          }
         });
-        let turn;
-        if (!squareIsComplete) {
+        let message = '';
+        if (winSquares === 0) {
           togglePlayerTurn(room);
-          turn = true;
+          io.to(roomId).emit('togglePlayerTurn');
         } else {
-          user.score++;
-          if (user.score + room.players[0].score === 100) {
-            if (user.score > room.players[0].score) {
-              message = user.mail + ' gagne la partie';
+          user.score += winSquares;
+
+          if (room.players[1].score + room.players[0].score === 100) {
+            if (room.players[1].score > room.players[0].score) {
+              message = room.players[1].mail + ' gagne la partie';
             } else {
               message = room.players[0].mail + ' gagne la partie';
             }
           }
         }
+
         io.to(roomId).emit('allowToPlay', {
           fenceConfig,
           squaresChanged,
-          turn: assignSquareToPlayer
+          scorePlayer1: room.players[0].score,
+          scorePlayer2: room.players[1].score,
+          message: message
         });
       }
+    });
+    socket.on('disconnect', () => {
+      socket.broadcast.to(roomId).emit('disconnected', {
+        message: user.mail + ' a quitté la partie.'
+      });
     });
   });
 };

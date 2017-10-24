@@ -1,25 +1,14 @@
 const uuidv4 = require('uuid/v4');
 
 const users = [];
+const COLORS = ['#FC4349', '#6DBCDB'];
 
-const randomColor = () => {
-  return (
-    'rgb(' +
-    Math.floor(Math.random() * 256) +
-    ',' +
-    Math.floor(Math.random() * 256) +
-    ',' +
-    Math.floor(Math.random() * 256) +
-    ')'
-  );
-};
-
-const create = ({ mail, password }) => {
+const create = ({ mail, password }, color) => {
   const newUser = {
     id: uuidv4(),
     mail,
     password,
-    color: randomColor(),
+    color: color,
     score: 0
   };
   users.push(newUser);
@@ -46,7 +35,8 @@ const login = ({ mail, password }) => {
   }
 
   if (!user) {
-    user = create({ mail, password });
+    const color = COLORS[users.length];
+    user = create({ mail, password }, color);
   }
   return user;
 };

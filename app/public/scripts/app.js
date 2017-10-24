@@ -12,4 +12,9 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: '/templates/login',
     controller: 'loginController as loginController'
   });
+  $stateProvider.state('avatar', {
+    url: '/avatar',
+    templateUrl: '/templates/avatar',
+    controller: 'avatarController as avatarController'
+  });
 });

@@ -14,7 +14,7 @@ myApp.directive('canvas', [
         var squaresArray = [];
         var fencesArray = [];
         var coor = [];
-        var username;
+        var username, turn;
 
         var intervalBetween = 50;
         var fenceShortSide = 2;
@@ -41,7 +41,7 @@ myApp.directive('canvas', [
           };
         }
 
-        function Fence(x, y, w, h, color) {
+        function Fence(x, y, w, h) {
           this.context = context;
           this.height = h;
           this.width = w;
@@ -49,7 +49,7 @@ myApp.directive('canvas', [
           this.yPos = y - fenceShortSide / 2;
 
           this.render = function() {
-            this.context.fillStyle = color;
+            this.context.fillStyle = '#2c3e50';
             this.context.fillRect(
               this.xPos,
               this.yPos,
@@ -101,7 +101,7 @@ myApp.directive('canvas', [
           requestAnimationFrame(draw);
         };
 
-        socketService.on('gameVariables', function(data) {
+        socketService.on('initGame', function(data) {
           coor = data.coord;
           var squares = data.squares;
 
@@ -110,6 +110,11 @@ myApp.directive('canvas', [
 
             squaresArray.push(newSquare);
           });
+        });
+
+        socketService.on('turn', function(data) {
+          turn = data.turn;
+          console.log('in turn', turn);
         });
 
         canvas.addEventListener(
@@ -121,10 +126,12 @@ myApp.directive('canvas', [
             var mousePosX = event.clientX - rect.left;
             var mousePosY = event.clientY - rect.top;
 
-            socketService.emit('canvasClicked', {
-              mousePosX,
-              mousePosY
-            });
+            if (turn) {
+              socketService.emit('canvasClicked', {
+                mousePosX,
+                mousePosY
+              });
+            }
           },
           false
         );
@@ -142,6 +149,9 @@ myApp.directive('canvas', [
           fencesArray.push(fence);
           console.log(data.squaresChanged);
           updateSquare(data.squaresChanged);
+        });
+        socketService.on('togglePlayerTurn', function() {
+          turn = !turn;
         });
         draw();
       }

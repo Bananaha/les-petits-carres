@@ -3,6 +3,15 @@ myApp.controller('loginController', [
   '$state',
   'loginService',
   function($scope, $state, loginService) {
+    $scope.avatarsList = [
+      'elephant',
+      'giraffe',
+      'hippo',
+      'monkey',
+      'panda',
+      'parrot'
+    ];
+    $scope.selectedAvatar;
     this.onSubmit = function() {
       loginService
         .login($scope.mail, $scope.password)

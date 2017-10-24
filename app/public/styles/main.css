@@ -1,7 +1,33 @@
 body {
-    background: blueviolet;
+  background: #2c3e50;
 }
 
 canvas {
-    background: white;
+  background: white;
+}
+
+.elephant-img {
+  background-image: url('../assets/avatars/elephant.png');
+}
+.giraffe-img {
+  background-image: url('../assets/avatars/giraffe.png');
+}
+.hippo-img {
+  background-image: url('../assets/avatars/hippo.png');
+}
+.monkey-img {
+  background-image: url('../assets/avatars/monkey.png');
+}
+.panda-img {
+  background-image: url('../assets/avatars/panda.png');
+}
+.parrot-img {
+  background-image: url('../assets/avatars/parrot.png');
+}
+.img {
+  width: 100px;
+  height: 100px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
