@@ -3,12 +3,13 @@ const uuidv4 = require('uuid/v4');
 const users = [];
 const COLORS = ['#FC4349', '#6DBCDB'];
 
-const create = ({ mail, password }, color) => {
+const create = ({ mail, password, avatar }, color) => {
   const newUser = {
     id: uuidv4(),
     mail,
     password,
     color: color,
+    avatar: avatar,
     score: 0
   };
   users.push(newUser);
@@ -27,7 +28,7 @@ const findOpponent = mail => {
   });
 };
 
-const login = ({ mail, password }) => {
+const login = ({ mail, password, avatar }) => {
   let user = getByMail(mail);
 
   if (user && user.password !== password) {
@@ -36,8 +37,9 @@ const login = ({ mail, password }) => {
 
   if (!user) {
     const color = COLORS[users.length];
-    user = create({ mail, password }, color);
+    user = create({ mail, password, avatar }, color);
   }
+  console.log('userService user.avater', user.avatar);
   return user;
 };
 

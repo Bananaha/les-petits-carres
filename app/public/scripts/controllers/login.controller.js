@@ -14,7 +14,7 @@ myApp.controller('loginController', [
     $scope.selectedAvatar;
     this.onSubmit = function() {
       loginService
-        .login($scope.mail, $scope.password)
+        .login($scope.mail, $scope.password, $scope.selectedAvatar)
         .then(function(res) {
           $state.go('game');
         })

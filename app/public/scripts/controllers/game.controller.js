@@ -39,7 +39,6 @@ myApp.controller('gameController', [
     });
 
     socketService.on('disconnected', function(data) {
-      console.log(data);
       $scope.gameMessage = data.message;
     });
   }

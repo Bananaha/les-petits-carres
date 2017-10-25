@@ -17,11 +17,7 @@ const createGame = id => {
   return games[id];
 };
 
-const getOrCreate = id => {
-  return games[id] || createGame(id);
-};
-
-const computeSquares = function () {
+const computeSquares = function() {
   const squares = [];
   let squareId = 0;
   for (let x = 0, len = GAME_SIZE; x < len; x += SQUARE_SIZE) {
@@ -47,6 +43,146 @@ const computeCoord = () => {
   return coord;
 };
 
+const getOrCreate = id => {
+  return games[id] || createGame(id);
+};
+
+const random = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const firstToPlay = (room, user) => {
+  const firstToPlayRandom = random(0, 1);
+  room.players.forEach((player, index) => {
+    player.turnToPlay = firstToPlayRandom === index;
+  });
+  if (user.turnToPlay) {
+    return user.mail;
+  } else {
+    return room.players[0].mail;
+  }
+};
+
+const computeFence = (coord, clientData, client, fenceConfig) => {
+  coord.forEach(function(xPos) {
+    coord.forEach(function(yPos) {
+      // trait vertical
+      if (
+        clientData.mousePosY > yPos - CLICK_TOLERANCE &&
+        clientData.mousePosY < yPos + FENCE_SIZE.longSide &&
+        clientData.mousePosX > xPos - CLICK_TOLERANCE &&
+        clientData.mousePosX < xPos + CLICK_TOLERANCE
+      ) {
+        fenceConfig.y = yPos + FENCE_SIZE.shortSide;
+        fenceConfig.x = xPos;
+        fenceConfig.w = FENCE_SIZE.shortSide;
+        fenceConfig.h = SQUARE_SIZE - FENCE_SIZE.shortSide;
+        fenceConfig.owner = client.mail;
+      }
+      // trait horizontal
+      if (
+        clientData.mousePosY > yPos - CLICK_TOLERANCE &&
+        clientData.mousePosY < yPos + CLICK_TOLERANCE &&
+        clientData.mousePosX > xPos - CLICK_TOLERANCE &&
+        clientData.mousePosX < xPos + FENCE_SIZE.longSide
+      ) {
+        fenceConfig.y = yPos;
+        fenceConfig.x = xPos + FENCE_SIZE.shortSide;
+        fenceConfig.w = SQUARE_SIZE - FENCE_SIZE.shortSide;
+        fenceConfig.h = FENCE_SIZE.shortSide;
+        fenceConfig.owner = client.mail;
+      }
+    });
+  });
+};
+
+const assignFenceProps = (fence, user, squares, fences) => {
+  fence.color = user.color;
+  fences.push(fence);
+  return findAttachedSquare(fence, user, squares);
+};
+
+const togglePlayerTurn = room => {
+  room.players.forEach(player => {
+    player.turnToPlay = !player.turnToPlay;
+  });
+};
+
+const changeSquareProps = (square, targetProp, user, squares) => {
+  square[targetProp] = user.mail;
+  if (square.top && square.bottom && square.left && square.right) {
+    square.isComplete = user.mail;
+    square.color = user.color;
+  }
+  return square;
+};
+
+const findAttachedSquare = (fence, user, squares) => {
+  let squareA, squareB;
+  // trait horizontal
+  //Si la hauteur du coté cliqué est également à fenceShortSide (petite hauteur), alors il s'agît d'un trait horizontal
+  if (fence.h === FENCE_SIZE.shortSide) {
+    // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
+    for (let i = 0, len = squares.length; i < len; i++) {
+      if (
+        squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
+        squares[i].yPos === fence.y
+      ) {
+        squareA = changeSquareProps(squares[i], 'top', user, squares);
+      }
+      if (
+        squares[i].xPos === fence.x - FENCE_SIZE.shortSide &&
+        squares[i].yPos === fence.y - SQUARE_SIZE
+      ) {
+        squareB = changeSquareProps(squares[i], 'bottom', user, squares);
+      }
+    }
+  }
+
+  // trait vertical
+  //Si la hauteur du coté cliqué est également à intervalBetween - fenceShortSide (grande hauteur), alors il s'agît d'un trait vertical
+
+  if (fence.h === SQUARE_SIZE - FENCE_SIZE.shortSide) {
+    for (let i = 0, len = squares.length; i < len; i++) {
+      // on recherche les carrés dont le trait tracé dépend pour enregistrer qu'il est cliqué
+
+      if (
+        squares[i].xPos === fence.x &&
+        squares[i].yPos === fence.y - FENCE_SIZE.shortSide
+      ) {
+        squareA = changeSquareProps(squares[i], 'left', user, squares);
+      }
+
+      if (
+        squares[i].xPos === fence.x - SQUARE_SIZE &&
+        squares[i].yPos === fence.y - FENCE_SIZE.shortSide
+      ) {
+        squareB = changeSquareProps(squares[i], 'right', user, squares);
+      }
+    }
+  }
+  let attachedSquares = [];
+  if (!squareA && squareB) {
+    attachedSquares.push(squareB);
+  }
+  if (squareA && !squareB) {
+    attachedSquares.push(squareA);
+  }
+  if (squareA && squareB) {
+    attachedSquares.push(squareA, squareB);
+  }
+  return attachedSquares;
+};
+
 module.exports = {
-  getOrCreate
+  getOrCreate,
+  random,
+  firstToPlay,
+  computeFence,
+  assignFenceProps,
+  togglePlayerTurn,
+  changeSquareProps,
+  findAttachedSquare
 };

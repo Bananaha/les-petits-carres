@@ -4,7 +4,6 @@ myApp.factory('socketService', function($rootScope) {
   function connect() {
     return (socket = io.connect());
   }
-  // var socket = io.connect();
 
   function on(eventName, callback) {
     socket.on(eventName, function() {

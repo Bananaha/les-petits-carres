@@ -1,8 +1,10 @@
 div
   p(ng-style="player1Style") {{player1}}
   span(ng-style="player1Style") {{scorePlayer1}}
+  .img(ng-class="selectedAvatar+'-img'")
   p(ng-style="player2Style") {{player2}}
   span(ng-style="player2Style") {{scorePlayer2}}
+  .img(ng-class="selectedAvatar+'-img'")
   canvas#canvas(canvas ng-click="gameController.onClick($event)")
   p {{gameMessage}}
   

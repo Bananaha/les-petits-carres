@@ -114,7 +114,7 @@ myApp.directive('canvas', [
 
         socketService.on('turn', function(data) {
           turn = data.turn;
-          console.log('in turn', turn);
+          console.log('socketTurn in canvasDirective', turn);
         });
 
         canvas.addEventListener(
@@ -137,7 +137,6 @@ myApp.directive('canvas', [
         );
 
         socketService.on('allowToPlay', function(data) {
-          console.log(data);
           var fence = new Fence(
             data.fenceConfig.x,
             data.fenceConfig.y,
@@ -147,7 +146,6 @@ myApp.directive('canvas', [
           );
 
           fencesArray.push(fence);
-          console.log(data.squaresChanged);
           updateSquare(data.squaresChanged);
         });
         socketService.on('togglePlayerTurn', function() {

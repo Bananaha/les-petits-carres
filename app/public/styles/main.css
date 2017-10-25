@@ -9,25 +9,41 @@ canvas {
 .elephant-img {
   background-image: url('../assets/avatars/elephant.png');
 }
+
 .giraffe-img {
   background-image: url('../assets/avatars/giraffe.png');
 }
+
 .hippo-img {
   background-image: url('../assets/avatars/hippo.png');
 }
+
 .monkey-img {
   background-image: url('../assets/avatars/monkey.png');
 }
+
 .panda-img {
   background-image: url('../assets/avatars/panda.png');
 }
+
 .parrot-img {
   background-image: url('../assets/avatars/parrot.png');
 }
+
 .img {
   width: 100px;
   height: 100px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
+  border: 5px solid red;
+  margin: auto;
+}
+
+.content {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1em;
+  padding-right: 1em;
+  max-width: 768px;
 }

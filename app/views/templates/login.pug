@@ -1,11 +1,18 @@
 h1 Small squares
 p Créez un compte ou connectez vous
-form.form-inline(ng-submit="loginController.onSubmit()")
-    p {{errorMessage}}
-    input.form-control.mr-sm-2.mb-2.mb-sm-0(type='email', name='mail', placeholder='Adresse mail' ng-model='mail')
-    input.form-control.mr-sm-2.mb-2.mb-sm-0(type='password', name='password', placeholder='Mot de passe' ng-model='password')
-    select(ng-model="selectedAvatar" ng-options="avatar for avatar in avatarsList" ng-change="update(avatar)")
-      option --Selectionnez un avatar--
-    .img(ng-class="selectedAvatar+'-img'")
-    img(src="../public/assets/avatars/elephant.png", alt="", srcset="")
-    button.btn.btn-primary.mt-2.mt-sm-0(type='submit') Submit
+.content.pure-g
+  form.pure-form.pure-form-aligned.pure-u-1-2(ng-submit="loginController.onSubmit()")
+    fieldset
+      .pure-control-group
+        label(for="email") Email
+        input#email(type="email" placeholder="Username" ng-model='mail' require)
+      .pure-control-group
+        label(for="password") Mot de passe
+        input#password(type="password" placeholder="Username" ng-model='password' require)
+      .pure-control-group
+        label(for="avatar") Avatar
+        select#avatar(ng-model="selectedAvatar" ng-options="avatar as avatar for avatar in avatarsList" ng-change="update(avatar)")
+          option(value="") -Choisissez un avatar-
+      .pure-controls
+        .img(ng-class="selectedAvatar+'-img'")
+        button.pure-button.pure-button-primary.pure-input-2-2(type='submit') Submit
