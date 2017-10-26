@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const db = require('./services/mongo-server');
+const dbService = require('./services/dbService');
 const login = require('./routes/login');
 const templates = require('./routes/templates');
 
@@ -30,7 +30,7 @@ const server = app.listen(PORT, () => {
 const io = require('socket.io')(server);
 const socketServer = require('./services/socket')(io);
 
-db.connect(URL, (error, db) => {
+dbService.connect(URL, (error, db) => {
   if (error) {
     console.log('impossible de se connecter à MongoDB');
   } else {

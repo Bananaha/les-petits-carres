@@ -1,3 +1,5 @@
+const userService = require('./userService');
+
 const GAME_SIZE = 500;
 const SQUARE_SIZE = GAME_SIZE / 10;
 const CLICK_TOLERANCE = 7;
@@ -176,6 +178,22 @@ const findAttachedSquare = (fence, user, squares) => {
   return attachedSquares;
 };
 
+const saveScores = (user1, user2) => {
+  const finalScores = [
+    {
+      player1: user1.mail,
+      date: new Date(),
+      score: user1.score
+    },
+    {
+      player2: user2.mail,
+      date: new Date(),
+      score: user2.score
+    }
+  ];
+  userService.updateUsers(finalScores);
+};
+
 module.exports = {
   getOrCreate,
   random,
@@ -184,5 +202,6 @@ module.exports = {
   assignFenceProps,
   togglePlayerTurn,
   changeSquareProps,
-  findAttachedSquare
+  findAttachedSquare,
+  saveScores
 };

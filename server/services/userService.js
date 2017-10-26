@@ -1,5 +1,7 @@
 const uuidv4 = require('uuid/v4');
+const dbService = require('./dbService');
 
+const usersCollection = dbService.get().collection('users');
 const users = [];
 const COLORS = ['#FC4349', '#6DBCDB'];
 
@@ -38,6 +40,21 @@ const login = ({ mail, password, avatar }) => {
   if (!user) {
     const color = COLORS[users.length];
     user = create({ mail, password, avatar }, color);
+    usersCollection.insertOne(
+      {
+        mail: user.mail,
+        password: user.password,
+        id: user.id,
+        score: []
+      },
+      (err, result) => {
+        if (err) {
+          console.log("user's insertion failed", err);
+          return;
+        }
+        console.log("user's insertion succed");
+      }
+    );
   }
   console.log('userService user.avater', user.avatar);
   return user;
@@ -52,6 +69,12 @@ const findUser = token => {
   } else {
     // throw Error('401');
   }
+};
+
+const updateUsers = players => {
+  players.forEach(player => {
+    // usersCollection.update
+  });
 };
 
 module.exports = {

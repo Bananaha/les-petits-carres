@@ -1,6 +1,6 @@
 const mongo = require('mongodb').MongoClient;
 
-var state = {
+const state = {
   db: null
 };
 

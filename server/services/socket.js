@@ -110,6 +110,7 @@ module.exports = io => {
           user.score += winSquares;
 
           if (room.players[1].score + room.players[0].score === 100) {
+            gameService.saveScores(room.players[0], room.players[1]);
             if (room.players[1].score > room.players[0].score) {
               message = room.players[1].mail + ' gagne la partie';
             } else {
