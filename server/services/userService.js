@@ -1,63 +1,59 @@
 const uuidv4 = require('uuid/v4');
 const dbService = require('./dbService');
 
-const usersCollection = dbService.get().collection('users');
 const users = [];
 const COLORS = ['#FC4349', '#6DBCDB'];
 
-const create = ({ mail, password, avatar }, color) => {
-  const newUser = {
-    id: uuidv4(),
-    mail,
-    password,
-    color: color,
-    avatar: avatar,
-    score: 0
+const create = ({ mail, password, avatar }, collection) => {
+  let newUser;
+  const userProps = {
+    mail: mail,
+    password: password,
+    score: []
   };
-  users.push(newUser);
-  return newUser;
-};
-
-const getByMail = mail => {
-  return users.find(user => {
-    return user.mail === mail;
-  });
-};
-
-const findOpponent = mail => {
-  return users.find(user => {
-    return user.mail !== mail;
+  collection.insertOne(userProps, (err, result) => {
+    if (err) {
+      console.log("user's insertion failed", err);
+    } else {
+      newUser = userProps;
+      console.log("user's insertion succed", newUser);
+      return newUser;
+    }
   });
 };
 
 const login = ({ mail, password, avatar }) => {
-  let user = getByMail(mail);
+  return dbService
+    .getOne('users', { mail: mail })
+    .then(user => console.log('coucou toi', user));
+  return Promise.reject();
+  const usersCollection = dbService.get().collection('users');
 
-  if (user && user.password !== password) {
-    // throw Error('403');
-  }
+  let user;
 
-  if (!user) {
-    const color = COLORS[users.length];
-    user = create({ mail, password, avatar }, color);
-    usersCollection.insertOne(
-      {
-        mail: user.mail,
-        password: user.password,
-        id: user.id,
-        score: []
-      },
-      (err, result) => {
-        if (err) {
-          console.log("user's insertion failed", err);
-          return;
-        }
-        console.log("user's insertion succed");
+  return usersCollection.findOne({ mail: mail }, (error, result) => {
+    if (error) {
+      console.log('userCollection.findOne', error);
+    } else {
+      if (result.length === 0) {
+        user = create({ mail, password, avatar }, usersCollection);
+      } else {
+        user = result;
       }
-    );
-  }
-  console.log('userService user.avater', user.avatar);
-  return user;
+    }
+    if (user && user.password !== password) {
+      console.log('wrong credentials');
+      // throw Error('403');
+    }
+
+    const color = COLORS[users.length];
+    user.id = uuidv4();
+    user.color = color;
+    user.avatar = avatar;
+    console.log('user', user);
+    users.push(user);
+    return user;
+  });
 };
 
 const findUser = token => {
@@ -80,8 +76,7 @@ const updateUsers = players => {
 module.exports = {
   login,
   users,
-  findUser,
-  findOpponent
+  findUser
 };
 
 // gérer le fait que l'utilisateur essaye de se connecter alors qu'il est déjà en ligne

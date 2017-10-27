@@ -18,6 +18,17 @@ const connect = (url, done) => {
   });
 };
 
+const getOne = (collectionName, filters) => {
+  return new Promise((resolve, reject) => {
+    state.db.collection(collectionName).findOne(filters, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
 const get = () => {
   return state.db;
 };
@@ -37,6 +48,7 @@ const close = done => {
 
 module.exports = {
   connect,
+  getOne,
   get,
   close
 };

@@ -11,15 +11,17 @@ router.use(bodyParser.json()).post('/', (req, res) => {
     avatar: req.body.avatar
   };
 
-  const logInUser = userService.login(user);
-
-  try {
-    const userId = logInUser.id;
-    res.send({ token: userId });
-  } catch (err) {
-    console.log('fail loginUser in login route', err);
-    res.status(403).send('bad credentials');
-  }
+  userService
+    .login(user)
+    .then(logedUser => {
+      console.log(logedUser);
+      const userId = logedUser.id;
+      res.send({ token: userId });
+    })
+    .catch(err => {
+      console.log('fail loginUser in login route', err);
+      res.status(403).send('bad credentials');
+    });
 });
 
 module.exports = router;

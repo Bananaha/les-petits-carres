@@ -16,7 +16,7 @@ module.exports = io => {
   io.on('connection', socket => {
     console.log('ws connecté');
 
-    let user, room, roomId, game, opponent;
+    let user, room, roomId, game;
 
     socket.on('sendToken', token => {
       user = userService.findUser(token);
@@ -128,9 +128,11 @@ module.exports = io => {
       }
     });
     socket.on('disconnect', () => {
-      socket.broadcast.to(roomId).emit('disconnected', {
-        message: user.mail + ' a quitté la partie.'
-      });
+      if (room.players.length === 2) {
+        io.broadcast.to(roomId).emit('disconnected', {
+          message: 'Votre adversaire a quitté la partie.'
+        });
+      }
     });
   });
 };
