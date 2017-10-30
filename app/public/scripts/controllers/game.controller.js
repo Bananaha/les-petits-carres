@@ -18,6 +18,7 @@ myApp.controller('gameController', [
       $scope.player1Style = {
         color: data.color
       };
+      $scope.avatarPlayer1 = data.avatarPlayer1;
     });
 
     socketService.on('initGame', function(data) {
@@ -25,10 +26,12 @@ myApp.controller('gameController', [
       $scope.player1Style = {
         color: data.colorPlayer1
       };
+      $scope.avatarPlayer1 = data.avatarPlayer1;
       $scope.player2 = data.player2;
       $scope.player2Style = {
         color: data.colorPlayer2
       };
+      $scope.avatarPlayer2 = data.avatarPlayer2;
       $scope.gameMessage = data.message;
     });
 

@@ -1,9 +1,20 @@
 body {
-  background: #2c3e50;
+  background: #ffffff;
+  font-family: 'Roboto', sans-serif;
 }
 
-canvas {
-  background: white;
+#canvas {
+  background: #a01a1a;
+  margin: auto;
+}
+
+h1 {
+  font-family: 'Sofia', cursive;
+  color: #ffffff;
+}
+
+.bg-blue {
+  background-color: #4179f7;
 }
 
 .elephant-img {
@@ -36,14 +47,30 @@ canvas {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  border: 5px solid red;
   margin: auto;
 }
 
-.content {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1em;
-  padding-right: 1em;
-  max-width: 768px;
+.login-button {
+  margin-top: 20px;
+}
+
+.paragraphe {
+  text-align: center;
+  margin: 0;
+}
+
+.shadow {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 72px;
+}
+
+.card-width {
+  max-width: 350px;
 }

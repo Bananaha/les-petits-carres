@@ -8,11 +8,14 @@ myApp.factory('loginService', [
           password: password,
           avatar: avatar
         })
-        .then(function(res, req) {
+        .then(function(res) {
+          console.log(res);
           localStorage.setItem('token', res.data.token);
+          return res.data;
         })
-        .catch(function() {
-          console.log("erreur dans l'ajout du token");
+        .catch(function(error) {
+          console.log('wrong credentials', error);
+          return error.data;
         });
     }
 

@@ -18,6 +18,17 @@ const connect = (url, done) => {
   });
 };
 
+const create = (collectionName, props) => {
+  return new Promise((resolve, reject) => {
+    state.db.collection(collectionName).insertOne(props, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
 const getOne = (collectionName, filters) => {
   return new Promise((resolve, reject) => {
     state.db.collection(collectionName).findOne(filters, (error, result) => {
@@ -29,8 +40,31 @@ const getOne = (collectionName, filters) => {
   });
 };
 
-const get = () => {
-  return state.db;
+const update = (collectionName, filters, doc) => {
+  return new Promise((resolve, reject) => {
+    state.db
+      .collection(collectionName)
+      .updateOne(filters, doc, (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+  });
+};
+
+const getAll = (collectionName, filter) => {
+  return new Promise((resolve, reject) => {
+    state.db
+      .collection(collectionName)
+      .find(filter)
+      .toArray((error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+  });
 };
 
 const close = done => {
@@ -47,8 +81,10 @@ const close = done => {
 };
 
 module.exports = {
+  close,
   connect,
+  create,
+  getAll,
   getOne,
-  get,
-  close
+  update
 };

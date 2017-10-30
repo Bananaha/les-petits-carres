@@ -114,7 +114,6 @@ myApp.directive('canvas', [
 
         socketService.on('turn', function(data) {
           turn = data.turn;
-          console.log('socketTurn in canvasDirective', turn);
         });
 
         canvas.addEventListener(

@@ -1,3 +1,4 @@
+const moment = require('moment');
 const userService = require('./userService');
 
 const GAME_SIZE = 500;
@@ -179,16 +180,30 @@ const findAttachedSquare = (fence, user, squares) => {
 };
 
 const saveScores = (user1, user2) => {
+  if (user1.score > 50) {
+    user1.partyStatus = 'win';
+    user2.partyStatus = 'loose';
+  } else {
+    if (user1.score < 50) {
+      user1.partyStatus = 'loose';
+      user2.partyStatus = 'win';
+    } else {
+      user1.partyStatus = 'draw';
+      user2.partyStatus = 'draw';
+    }
+  }
   const finalScores = [
     {
       player1: user1.mail,
-      date: new Date(),
-      score: user1.score
+      date: moment().format('DD/MM/YYYY HH:mm'),
+      score: user1.score,
+      status: user1.partyStatus
     },
     {
       player2: user2.mail,
-      date: new Date(),
-      score: user2.score
+      date: moment().format('DD/MM/YYYY HH:mm'),
+      score: user2.score,
+      status: user2.partyStatus
     }
   ];
   userService.updateUsers(finalScores);

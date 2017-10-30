@@ -29,7 +29,8 @@ module.exports = io => {
         socket.emit('justOneGamer', {
           player1: user.mail,
           color: user.color,
-          message: "Patientez jusqu'à l'arrivée d'un joueur"
+          message: "Patientez jusqu'à l'arrivée d'un joueur",
+          avatarPlayer1: user.avatar
         });
       } else {
         const beginner = gameService.firstToPlay(room, user);
@@ -47,9 +48,11 @@ module.exports = io => {
           player1: room.players[0].mail,
           colorPlayer1: room.players[0].color,
           scorePlayer1: room.players[0].score,
+          avatarPlayer1: room.players[0].avatar,
           player2: user.mail,
           colorPlayer2: user.color,
           scorePlayer2: user.score,
+          avatarPlayer2: user.avatar,
           message: beginner + ' commence à jouer'
         });
       }
@@ -128,8 +131,9 @@ module.exports = io => {
       }
     });
     socket.on('disconnect', () => {
+      if (user && user.mail) userService.removeInMemoryUser(user.mail);
       if (room.players.length === 2) {
-        io.broadcast.to(roomId).emit('disconnected', {
+        io.to(roomId).emit('disconnected', {
           message: 'Votre adversaire a quitté la partie.'
         });
       }

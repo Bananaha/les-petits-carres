@@ -1,10 +1,17 @@
-div
-  p(ng-style="player1Style") {{player1}}
-  span(ng-style="player1Style") {{scorePlayer1}}
-  .img(ng-class="selectedAvatar+'-img'")
-  p(ng-style="player2Style") {{player2}}
-  span(ng-style="player2Style") {{scorePlayer2}}
-  .img(ng-class="selectedAvatar+'-img'")
-  canvas#canvas(canvas ng-click="gameController.onClick($event)")
-  p {{gameMessage}}
-  
+.container-fluid
+  .row
+    .col-lg-3
+      .img(ng-class="avatarPlayer1+'-img'")
+      p(ng-style="player1Style") {{player1}}
+      p.border.border-success(ng-style="player1Style") {{scorePlayer1}}
+    .col-lg-6
+      canvas#canvas(canvas ng-click="gameController.onClick($event)")
+    .col-lg-3
+      .img(ng-class="avatarPlayer2+'-img'")
+      p(ng-style="player1Style") {{player2}}
+      p(ng-style="player1Style") {{scorePlayer2}}
+    
+  p.row.paragraphe {{gameMessage}}
+    
+    //- .row.justify-content-center.align-items-start
+    

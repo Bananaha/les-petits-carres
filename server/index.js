@@ -3,11 +3,10 @@ const bodyParser = require('body-parser');
 
 const dbService = require('./services/dbService');
 const login = require('./routes/login');
+const scores = require('./routes/scores');
 const templates = require('./routes/templates');
 
 const app = express();
-
-let myDb;
 
 const HOST = 'localhost';
 const URL = 'mongodb://localhost:27017/littleSquares';
@@ -19,6 +18,7 @@ app
   .use(express.static(__dirname + '/../app/public'))
   .use('/templates', templates)
   .use('/api/login', login)
+  .use('/api/scores', scores)
   .get('/', (req, res) => {
     res.render('index');
   });
@@ -34,6 +34,6 @@ dbService.connect(URL, (error, db) => {
   if (error) {
     console.log('impossible de se connecter à MongoDB');
   } else {
-    mydb = db;
+    return db;
   }
 });

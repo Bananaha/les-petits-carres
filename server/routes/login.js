@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const userService = require('../services/userService');
 
 router.use(bodyParser.json()).post('/', (req, res) => {
-  console.log('loginSeervice_req.body', req.body);
   const user = {
     mail: req.body.mail,
     password: req.body.password,
@@ -14,7 +13,16 @@ router.use(bodyParser.json()).post('/', (req, res) => {
   userService
     .login(user)
     .then(logedUser => {
-      console.log(logedUser);
+      console.log('logedUser', logedUser);
+      if (logedUser === 'wrong credentials') {
+        res.status(403).send('wrong credentials');
+        return;
+      }
+      if (logedUser === 'user already in game') {
+        res.status(403).send('user already in game');
+        return;
+      }
+
       const userId = logedUser.id;
       res.send({ token: userId });
     })

@@ -1,0 +1,23 @@
+.container
+  .row.mt-5
+    form.form-horizontal
+      fieldset
+        .form-group
+          select.form-control(
+            ng-model="selectedUser" 
+            ng-options="user for user in users" ng-change="displayUserScores(selectedUser)")
+            option(value="") -Choisir un joueur-
+  .row
+    table.table.table-hover
+      thead.bg-blue
+        tr
+          th(scope='col') Date
+          th(scope='col') Score
+          th(scope='col') Statut
+      tbody
+        tr(ng-repeat="infos in userScores" scope="row")
+          td {{ infos.date }}
+          td {{ infos.score }}
+          td 
+            span(ng-class="setBadgeStyle(infos.playerStatus)" class="badge") {{ infos.playerStatus }}
+            
