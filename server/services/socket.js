@@ -2,6 +2,7 @@
 const userService = require('./userService');
 const roomService = require('./roomService');
 const gameService = require('./gameService');
+const socketAction = require('./socketActions');
 
 // Global variables
 const GAME_SIZE = 500;
@@ -28,7 +29,7 @@ module.exports = io => {
       if (room.players.length < 2) {
         socket.emit('justOneGamer', {
           player1: user.mail,
-          color: user.color,
+          scorePlayer1: user.score,
           message: "Patientez jusqu'à l'arrivée d'un joueur",
           avatarPlayer1: user.avatar
         });
@@ -46,11 +47,9 @@ module.exports = io => {
           coord: game.coord,
           squares: game.squares,
           player1: room.players[0].mail,
-          colorPlayer1: room.players[0].color,
           scorePlayer1: room.players[0].score,
           avatarPlayer1: room.players[0].avatar,
           player2: user.mail,
-          colorPlayer2: user.color,
           scorePlayer2: user.score,
           avatarPlayer2: user.avatar,
           message: beginner + ' commence à jouer'
@@ -121,6 +120,12 @@ module.exports = io => {
             }
           }
         }
+        console.log(
+          'player1',
+          room.players[0].score,
+          'player2',
+          room.players[1].score
+        );
         io.to(roomId).emit('allowToPlay', {
           fenceConfig,
           squaresChanged,

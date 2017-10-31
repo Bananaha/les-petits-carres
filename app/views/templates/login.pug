@@ -1,34 +1,28 @@
-.container
-  .row
-    .panel.bg-blue.shadow.card-width.col-md-6.col-md-offset-3
-      .panel-heading
-        p.justify-content-center.paragraphe Créez un compte ou connectez vous
-      .panel-body
-        form.form-horizontal(ng-submit="loginController.onSubmit()")
-          fieldset.col-11
-              .form-group
-                  input.form-control(
-                    type="email" 
-                    placeholder="email@exemple.com" 
-                    ng-model='mail' 
-                    required)
-              .form-group
-                  input.form-control(
-                    type="password" 
-                    placeholder="mot de passe" 
-                    ng-model='password' 
-                    required)
-              .form-row.align-items-center
-                .form-group
-                  select.form-control(
-                    ng-model="selectedAvatar" 
-                    ng-options="avatar as avatar for avatar in avatarsList" ng-change="update(avatar)" required)
-                    option(value="") Avatar
-                .col-md-6
-                  .img(ng-class="selectedAvatar+'-img'")
-              .form-group
-                .col
-                  button.btn.btn-outline-light.btn-lg.btn-block.login-button(type='submit') Jouez
-    p {{ loginMessage }}
-        //- button.col-6.btn.btn-outline-light.btn-lg(ng-click="loginController.seeScores()") Hall of fame
+.login-container.bg-blue.border-radius
+  p.login-header-text Créez un compte ou connectez vous
+  div
+    form.bg-blue.border-radius(ng-submit="loginController.onSubmit()")  
+      .form-block
+        input.form-component.border-radius(
+          type="email" 
+          placeholder="email@exemple.com" 
+          ng-model='mail' 
+          required)
+      .form-block
+        input.form-component.border-radius(
+          type="password" 
+          placeholder="mot de passe" 
+          ng-model='password' 
+          required)
+      .form-block
+        select.form-component.border-radius(
+          ng-model="selectedAvatar" 
+          ng-options="avatar as avatar for avatar in avatarsList" ng-change="update(avatar)" required)
+          option(value="") Avatar
+        div
+          .img(ng-class="selectedAvatar+'-img'")
+      .form-block
+        button.form-component.border-radius.button-component(type='submit') Jouez
+        p.login-header-text {{ loginMessage }}
+
         

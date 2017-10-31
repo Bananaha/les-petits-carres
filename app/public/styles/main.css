@@ -1,44 +1,74 @@
 body {
   background: #ffffff;
   font-family: 'Roboto', sans-serif;
-}
-
-#canvas {
-  background: #a01a1a;
-  margin: auto;
+  color: #393939;
 }
 
 h1 {
   font-family: 'Sofia', cursive;
   color: #ffffff;
+  margin: 0 0 0 20px;
+  line-height: 70px;
+  display: inline-block;
+}
+
+form {
+  padding: 10px 0;
+}
+
+.container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 70px;
+}
+
+.login-container {
+  min-width: 350px;
+  max-width: 450px;
+  height: 300px;
+  margin: 50px auto;
+}
+
+#canvas {
+  background: #ffffff;
+  margin: 0 auto;
+  display: block;
+  width: 500px;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  vertical-align: middle;
 }
 
 .bg-blue {
   background-color: #4179f7;
 }
 
-.elephant-img {
-  background-image: url('../assets/avatars/elephant.png');
+.border-radius {
+  border-radius: 5px;
 }
 
-.giraffe-img {
-  background-image: url('../assets/avatars/giraffe.png');
+.form-block {
+  text-align: center;
+  margin: 20px 0;
 }
 
-.hippo-img {
-  background-image: url('../assets/avatars/hippo.png');
-}
-
-.monkey-img {
-  background-image: url('../assets/avatars/monkey.png');
-}
-
-.panda-img {
-  background-image: url('../assets/avatars/panda.png');
-}
-
-.parrot-img {
-  background-image: url('../assets/avatars/parrot.png');
+.form-component {
+  height: 40px;
+  border: none;
+  width: 75%;
+  margin: auto;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #393939;
 }
 
 .img {
@@ -47,30 +77,70 @@ h1 {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  margin: auto;
+  margin: 20px auto;
 }
 
 .login-button {
   margin-top: 20px;
 }
 
-.paragraphe {
+.login-header-text {
+  color: #ffffff;
   text-align: center;
   margin: 0;
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
 }
 
 .shadow {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-.container {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 72px;
+.button-component {
+  height: 40px;
+  background: transparent;
+  border: 1px solid #ffffff;
+  color: #ffffff;
 }
 
-.card-width {
-  max-width: 350px;
+.header-link {
+  display: inline-block;
+  position: absolute;
+  line-height: 70px;
+  right: 20px;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+.header-link:visited {
+  color: #ffffff;
+}
+
+.header-link:hover {
+  color: #ffbe00;
+}
+
+.border-blue {
+  border: 1px solid #4179f7;
+}
+
+.game-paragraphe {
+  text-align: center;
+}
+
+.score-paragraphe {
+  color: #ffbe00;
+  font-size: 20px;
+  font-family: 'Sofia', cursive;
+}
+
+.game-message {
+  max-width: 500px;
+  text-align: center;
+  margin: 0 auto;
+  height: 30px;
+  line-height: 30px;
+  color: #4179f7;
+  font-size: 18px;
 }

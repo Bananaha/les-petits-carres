@@ -1,14 +1,12 @@
-.container
-  .row.mt-5
-    form.form-horizontal
-      fieldset
-        .form-group
-          select.form-control(
-            ng-model="selectedUser" 
-            ng-options="user for user in users" ng-change="displayUserScores(selectedUser)")
-            option(value="") -Choisir un joueur-
-  .row
-    table.table.table-hover
+div
+  div
+    form
+      .form-block
+        select.form-component.border-radius.border-blue(
+          ng-model="selectedUser" 
+          ng-options="user for user in users" ng-change="displayUserScores(selectedUser)")
+          option(value="") -Choisir un joueur-
+    table
       thead.bg-blue
         tr
           th(scope='col') Date
@@ -19,5 +17,5 @@
           td {{ infos.date }}
           td {{ infos.score }}
           td 
-            span(ng-class="setBadgeStyle(infos.playerStatus)" class="badge") {{ infos.playerStatus }}
+            span.badge(ng-class="setBadgeStyle(infos.playerStatus)" class="badge") {{ infos.playerStatus }}
             

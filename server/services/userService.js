@@ -10,8 +10,7 @@ const create = props => {
   return dbService
     .create('users', {
       mail: props.mail,
-      password: props.password,
-      scores: []
+      password: props.password
     })
     .then(user => {
       return user.ops[0];
@@ -103,6 +102,7 @@ const login = async ({ mail, password, avatar }) => {
   const color = COLORS[users.length];
   user.id = uuidv4();
   user.color = color;
+  user.score = 0;
   user.avatar = avatar;
 
   users.push(user);
@@ -117,5 +117,3 @@ module.exports = {
   findAll,
   removeInMemoryUser
 };
-
-// gérer le fait que l'utilisateur essaye de se connecter alors qu'il est déjà en ligne

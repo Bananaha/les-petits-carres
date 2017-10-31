@@ -23,19 +23,14 @@ myApp.controller('gameController', [
 
     socketService.on('initGame', function(data) {
       $scope.player1 = data.player1;
-      $scope.player1Style = {
-        color: data.colorPlayer1
-      };
       $scope.avatarPlayer1 = data.avatarPlayer1;
       $scope.player2 = data.player2;
-      $scope.player2Style = {
-        color: data.colorPlayer2
-      };
       $scope.avatarPlayer2 = data.avatarPlayer2;
       $scope.gameMessage = data.message;
     });
 
     socketService.on('allowToPlay', function(data) {
+      console.log(data);
       $scope.scorePlayer1 = data.scorePlayer1;
       $scope.scorePlayer2 = data.scorePlayer2;
       $scope.gameMessage = data.message;
