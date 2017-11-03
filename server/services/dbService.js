@@ -1,4 +1,5 @@
 const mongo = require('mongodb').MongoClient;
+const ObjectId = mongo.ObjectId;
 
 const state = {
   db: null
@@ -35,6 +36,7 @@ const getOne = (collectionName, filters) => {
       if (error) {
         return reject(error);
       }
+
       return resolve(result);
     });
   });

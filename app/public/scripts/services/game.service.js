@@ -1,1 +1,0 @@
-myApp.factory('gameService', [function() {}]);

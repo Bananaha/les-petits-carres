@@ -4,6 +4,7 @@ myApp.controller('scoresController', [
   'scoresService',
   function($scope, $state, scoresService) {
     var usersInformations;
+
     $scope.computeScores = function() {
       scoresService
         .getScores()
@@ -15,11 +16,11 @@ myApp.controller('scoresController', [
           console.log('pb in scoresController', err);
         });
     };
-
+    // à la sélection d'un joueur, ses données sont affichées dans le tableau
     $scope.displayUserScores = function(user) {
       $scope.userScores = scoresService.findScores(user, usersInformations);
     };
-
+    // change la class de l'élément badge en fonction de la valeur retournée par le serveur
     $scope.setBadgeStyle = function(status) {
       return scoresService.toggleBadgeStyle(status);
     };

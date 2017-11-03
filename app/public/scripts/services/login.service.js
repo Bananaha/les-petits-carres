@@ -9,7 +9,6 @@ myApp.factory('loginService', [
           avatar: avatar
         })
         .then(function(res) {
-          console.log(res);
           localStorage.setItem('token', res.data.token);
           return res.data;
         })

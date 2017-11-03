@@ -45,6 +45,7 @@ form {
   right: 0;
   height: 70px;
   vertical-align: middle;
+  z-index: 5;
 }
 
 .bg-blue {

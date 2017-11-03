@@ -17,7 +17,6 @@ myApp.controller('loginController', [
       loginService
         .login($scope.mail, $scope.password, $scope.selectedAvatar)
         .then(function(res) {
-          console.log('res in login controller', res);
           if (res.token) {
             $state.go('game');
           } else {
@@ -36,12 +35,9 @@ myApp.controller('loginController', [
           }
         })
         .catch(function(err) {
-          console.log('controller fail', err);
+          console.log('login_controller fail', err);
           $scope.errorMessage = err.data;
         });
-    };
-    this.seeScores = function() {
-      $state.go('scores');
     };
   }
 ]);

@@ -9,11 +9,9 @@ router.use(bodyParser.json()).post('/', (req, res) => {
     password: req.body.password,
     avatar: req.body.avatar
   };
-
   userService
     .login(user)
     .then(logedUser => {
-      console.log('logedUser', logedUser);
       if (logedUser === 'wrong credentials') {
         res.status(403).send('wrong credentials');
         return;
@@ -24,11 +22,11 @@ router.use(bodyParser.json()).post('/', (req, res) => {
       }
 
       const userId = logedUser.id;
-      res.send({ token: userId });
+      res.status(200).send({ token: userId });
     })
-    .catch(err => {
-      console.log('fail loginUser in login route', err);
-      res.status(403).send('bad credentials');
+    .catch(error => {
+      console.log('fail loginUser in login route', error);
+      res.status(403).send('FAILURE: token not set', error);
     });
 });
 

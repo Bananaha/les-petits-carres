@@ -13,7 +13,7 @@ html(lang="en")
     link(rel="stylesheet", href="/styles/grid.css")
 
   body(ng-app="app")
-    .header.bg-blue
+    .header.bg-blue.shadow
       h1(ui-sref="login") Les petits carrés
       a.header-link(ui-sref="scores") Hall of Fame
     .container(ui-view="")
@@ -31,5 +31,4 @@ html(lang="en")
     script(src="scripts/services/socket.service.js")
     script(src="scripts/services/scores.service.js")
     script(src="scripts/services/token.service.js")
-    script(src="scripts/services/game.service.js")
 

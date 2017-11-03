@@ -30,7 +30,6 @@ myApp.controller('gameController', [
     });
 
     socketService.on('allowToPlay', function(data) {
-      console.log(data);
       $scope.scorePlayer1 = data.scorePlayer1;
       $scope.scorePlayer2 = data.scorePlayer2;
       $scope.gameMessage = data.message;

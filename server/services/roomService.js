@@ -3,8 +3,9 @@
 const uuidv4 = require('uuid/v4');
 
 const rooms = [];
+const COLORS = ['#FC4349', '#6DBCDB'];
 
-function create() {
+const create = () => {
   const newRoom = {
     //id de la room
     id: uuidv4(),
@@ -17,30 +18,45 @@ function create() {
   // on ajoute la nouvelle room au tableau contenant les rooms existantes
   rooms.push(newRoom);
   return newRoom;
-}
+};
 
-function findRoom(id) {
+const findUserInRooms = mail => {
+  let target;
+  rooms.forEach(room => {
+    room.players.forEach(player => {
+      if (player.mail === mail) {
+        target = player;
+      }
+    });
+  });
+  return target;
+};
+
+const findRoom = id => {
   return rooms.find(room => {
     return room.id === id;
   });
-}
+};
 
-function findEmpty() {
-  // permet de trouver un room vide
+const findEmpty = () => {
+  // permet de trouver une room vide
   return rooms.find(room => {
     return room.full === false;
   });
-}
+};
 
-function join(user) {
+const join = user => {
   // rechercher une room incomplète
   let availableRoom = findEmpty();
   // si toute les rooms sont complètes ou qu'il n'en existe pas, création d'une room
   if (!availableRoom) {
     availableRoom = create(user);
   }
-  // attribution d'une nouvelle propriété au joueur contenant l'id de la room créée.
+  // attribution de nouvelles propriétés au joueur contenant l'id de la room créée, la color attribuée pour la partie, l'avatar et le score.
+  const color = COLORS[availableRoom.players.length];
   user.roomId = availableRoom.id;
+  user.color = color;
+  user.score = 49;
 
   //ajout du joueur à la room
   availableRoom.players.push(user);
@@ -51,18 +67,19 @@ function join(user) {
   }
   // retourne l'ID de la room dans laquelle le joueur vient d'être ajouter
   return availableRoom;
-}
+};
 
-function checkRoom(user) {
+const checkRoom = user => {
   // vérifier que le joueur a une propriété roomId, si c'est le cas, on retourne l'id de la room à laquelle il dépend
-  if (!user || !user.roomId) {
+  if (!user.roomId) {
     // sinon on le fait entrer dans une room
     return join(user);
   } else {
     return findRoom(user.roomId);
   }
-}
+};
 
 module.exports = {
-  checkRoom
+  checkRoom,
+  findUserInRooms
 };

@@ -11,7 +11,6 @@ myApp.factory('scoresService', [
           console.log('erreur dans la requete des scores');
         });
     }
-
     function extractUsers(usersInformations) {
       var users = [];
       usersInformations.forEach(function(userInformations) {

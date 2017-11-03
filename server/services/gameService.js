@@ -15,7 +15,8 @@ const createGame = id => {
   games[id] = {
     coord: computeCoord(),
     squares: computeSquares(),
-    fences: []
+    fences: [],
+    startDate: moment()
   };
   return games[id];
 };
@@ -179,7 +180,10 @@ const findAttachedSquare = (fence, user, squares) => {
   return attachedSquares;
 };
 
-const saveScores = (user1, user2) => {
+const saveScores = (user1, user2, id) => {
+  // définit la durée de la partie
+  const timeLapse = moment().diff(games[id].startDate, 'minutes');
+  // définit le label selon la victoire ou la défaite du joueur
   if (user1.score > 50) {
     user1.partyStatus = 'win';
     user2.partyStatus = 'loose';
@@ -192,21 +196,24 @@ const saveScores = (user1, user2) => {
       user2.partyStatus = 'draw';
     }
   }
+
   const finalScores = [
     {
-      player1: user1.mail,
+      mail: user1.mail,
       date: moment().format('DD/MM/YYYY HH:mm'),
       score: user1.score,
-      status: user1.partyStatus
+      status: user1.partyStatus,
+      timeLapse: timeLapse + ' minutes'
     },
     {
-      player2: user2.mail,
+      mail: user2.mail,
       date: moment().format('DD/MM/YYYY HH:mm'),
       score: user2.score,
-      status: user2.partyStatus
+      status: user2.partyStatus,
+      timeLapse: timeLapse + ' minutes'
     }
   ];
-  userService.updateUsers(finalScores);
+  userService.updateScores(finalScores);
 };
 
 module.exports = {

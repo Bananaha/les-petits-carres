@@ -1,38 +1,33 @@
 // Modules
+const moment = require('moment');
+
 const userService = require('./userService');
 const roomService = require('./roomService');
 const gameService = require('./gameService');
 const socketAction = require('./socketActions');
 
-// Global variables
-const GAME_SIZE = 500;
-const SQUARE_SIZE = GAME_SIZE / 10;
-const CLICK_TOLERANCE = 7;
-const FENCE_SIZE = {
-  longSide: 46,
-  shortSide: 2
-};
-
 module.exports = io => {
   io.on('connection', socket => {
     console.log('ws connecté');
-
+    socketAction.attachDispatcher(socket);
     let user, room, roomId, game;
 
-    socket.on('sendToken', token => {
-      user = userService.findUser(token);
+    socket.on('sendToken', async token => {
+      user = await userService.findById(token);
       room = roomService.checkRoom(user);
       roomId = room.id;
       socket.join(roomId);
       game = gameService.getOrCreate(roomId);
 
+      const firstConnexionInfos = {
+        player1: user.mail,
+        scorePlayer1: user.score,
+        message: "Patientez jusqu'à l'arrivée d'un joueur",
+        avatarPlayer1: user.avatar
+      };
+
       if (room.players.length < 2) {
-        socket.emit('justOneGamer', {
-          player1: user.mail,
-          scorePlayer1: user.score,
-          message: "Patientez jusqu'à l'arrivée d'un joueur",
-          avatarPlayer1: user.avatar
-        });
+        socket.emit('justOneGamer', firstConnexionInfos);
       } else {
         const beginner = gameService.firstToPlay(room, user);
 
@@ -43,7 +38,7 @@ module.exports = io => {
           turn: room.players[0].turnToPlay
         });
 
-        io.to(roomId).emit('initGame', {
+        const secondConnexionInfos = {
           coord: game.coord,
           squares: game.squares,
           player1: room.players[0].mail,
@@ -53,7 +48,9 @@ module.exports = io => {
           scorePlayer2: user.score,
           avatarPlayer2: user.avatar,
           message: beginner + ' commence à jouer'
-        });
+        };
+
+        io.to(roomId).emit('initGame', secondConnexionInfos);
       }
     });
 
@@ -98,12 +95,14 @@ module.exports = io => {
             game.fences
           );
         }
+
         let winSquares = 0;
         squaresChanged.forEach(square => {
           if (square.isComplete) {
             winSquares++;
           }
         });
+
         let message = '';
         if (winSquares === 0) {
           gameService.togglePlayerTurn(room);
@@ -112,33 +111,41 @@ module.exports = io => {
           user.score += winSquares;
 
           if (room.players[1].score + room.players[0].score === 100) {
-            gameService.saveScores(room.players[0], room.players[1]);
+            gameService.saveScores(room.players[0], room.players[1], roomId);
             if (room.players[1].score > room.players[0].score) {
               message = room.players[1].mail + ' gagne la partie';
             } else {
-              message = room.players[0].mail + ' gagne la partie';
+              if (room.players[1].score === room.players[0].score) {
+                message = 'Match nul';
+              } else {
+                message = room.players[0].mail + ' gagne la partie';
+              }
             }
           }
         }
-        console.log(
-          'player1',
-          room.players[0].score,
-          'player2',
-          room.players[1].score
-        );
-        io.to(roomId).emit('allowToPlay', {
+
+        const gameUpdateDatas = {
           fenceConfig,
           squaresChanged,
           scorePlayer1: room.players[0].score,
           scorePlayer2: room.players[1].score,
           message: message
-        });
+        };
+
+        io.to(roomId).emit('allowToPlay', gameUpdateDatas);
       }
     });
+
     socket.on('disconnect', () => {
-      if (user && user.mail) userService.removeInMemoryUser(user.mail);
+      console.log('user in disconnect', user);
+      console.log('user.mail: ', user.mail, ' disconnected');
+      // if (user && user.mail) userService.removeInMemoryUser(user.mail);
+      if (!room) {
+        socket.to(roomId).emit('disconnected');
+        return;
+      }
       if (room.players.length === 2) {
-        io.to(roomId).emit('disconnected', {
+        socket.to(roomId).emit('disconnected', {
           message: 'Votre adversaire a quitté la partie.'
         });
       }

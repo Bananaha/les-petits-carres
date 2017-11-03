@@ -10,11 +10,13 @@ div
       thead.bg-blue
         tr
           th(scope='col') Date
+          th(scope='col') Durée
           th(scope='col') Score
           th(scope='col') Statut
       tbody
         tr(ng-repeat="infos in userScores" scope="row")
           td {{ infos.date }}
+          td {{ infos.timeLapse }}
           td {{ infos.score }}
           td 
             span.badge(ng-class="setBadgeStyle(infos.playerStatus)" class="badge") {{ infos.playerStatus }}
