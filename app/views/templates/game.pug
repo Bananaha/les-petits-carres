@@ -2,13 +2,13 @@
   .grid
     .col-1-4
       .img(ng-class="avatarPlayer1+'-img'")
-      p.game-paragraphe(ng-style="player1Style") {{player1}}
+      p.game-paragraphe(ng-style="player1 ? player1ColorStyle : false") {{player1}}
       p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer1}}
     .col-1-2
       canvas#canvas(canvas ng-click="gameController.onClick($event)")
     .col-1-4
       .img(ng-class="avatarPlayer2+'-img'")
-      p.game-paragraphe(ng-style="player1Style") {{player2}}
+      p.game-paragraphe(ng-style="player2Style") {{player2}}
       p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer2}}
 
   p.game-message {{gameMessage}}

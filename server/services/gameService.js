@@ -51,6 +51,9 @@ const getOrCreate = id => {
   return games[id] || createGame(id);
 };
 
+const getById = id => {
+  return games[id];
+};
 const random = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -225,5 +228,6 @@ module.exports = {
   togglePlayerTurn,
   changeSquareProps,
   findAttachedSquare,
-  saveScores
+  saveScores,
+  getById
 };

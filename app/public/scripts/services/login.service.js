@@ -13,7 +13,6 @@ myApp.factory('loginService', [
           return res.data;
         })
         .catch(function(error) {
-          console.log('wrong credentials', error);
           return error.data;
         });
     }

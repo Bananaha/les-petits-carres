@@ -9,8 +9,8 @@ const templates = require('./routes/templates');
 const app = express();
 
 const HOST = 'localhost';
-const URL = 'mongodb://localhost:27017/littleSquares';
 const PORT = 5000;
+const URL = 'mongodb://' + HOST + ':27017/littleSquares';
 
 app
   .set('view engine', 'pug')

@@ -93,7 +93,7 @@ const login = async ({ mail, password, avatar }) => {
     return message;
   }
 
-  if (user && roomService.findUserInRooms(user.mail)) {
+  if (user && roomService.findUserInRoomsByMail(user.mail)) {
     const message = 'user already in game';
     return message;
   }

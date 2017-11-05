@@ -2,7 +2,7 @@ Les petits carrés
 ===================
 
 
-Les petits carrés est un projet back-end réalisé dans le cadre de ma formation **Développeur full stack JS** à l'[IFOCOP Paris 11](https://www.ifocop.fr/formations-metiers/web-digital/formation-developpeur-full-stack-js/). Le projet utilise les technos/modules/langages suivants : 
+Les petits carrés est un projet back-end réalisé dans le cadre de ma formation **Développeur full stack JS** à l'[IFOCOP Paris 11](https://www.ifocop.fr/formations-metiers/web-digital/formation-developpeur-full-stack-js/). Le projet utilise les technos suivantes : 
 
  - **AngularJS**
  -  **Pug**
@@ -41,15 +41,11 @@ const PORT = 5000;
 
 ```
 node run server
-
-ou
-
-nodemon server
 ```
 - mongo
 
 ```
-cd Path to mongo /bin/mongod
+cd Path to mongo /bin/mongod --dbpath
 ```
 
 

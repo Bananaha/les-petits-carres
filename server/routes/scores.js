@@ -14,7 +14,6 @@ router.use(bodyParser.json()).post('/', (req, res) => {
       res.send(users);
     })
     .catch(err => {
-      console.log('fail findAll Scores in scores route', err);
       res.status(500).send(Error);
     });
 });

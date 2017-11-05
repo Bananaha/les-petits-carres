@@ -20,11 +20,23 @@ const create = () => {
   return newRoom;
 };
 
-const findUserInRooms = mail => {
+const findUserInRoomsByMail = mail => {
   let target;
   rooms.forEach(room => {
     room.players.forEach(player => {
       if (player.mail === mail) {
+        target = player;
+      }
+    });
+  });
+  return target;
+};
+
+const findUserInRoomsById = id => {
+  let target;
+  rooms.forEach(room => {
+    room.players.forEach(player => {
+      if (player.id === id) {
         target = player;
       }
     });
@@ -81,5 +93,7 @@ const checkRoom = user => {
 
 module.exports = {
   checkRoom,
-  findUserInRooms
+  findUserInRoomsByMail,
+  findUserInRoomsById,
+  findRoom
 };

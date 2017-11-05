@@ -136,6 +136,7 @@ myApp.directive('canvas', [
         );
 
         socketService.on('allowToPlay', function(data) {
+          console.log('data', data);
           var fence = new Fence(
             data.fenceConfig.x,
             data.fenceConfig.y,
@@ -149,6 +150,7 @@ myApp.directive('canvas', [
         });
         socketService.on('togglePlayerTurn', function() {
           turn = !turn;
+          console.log('turn', turn);
         });
         draw();
       }

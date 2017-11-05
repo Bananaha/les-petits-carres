@@ -2,7 +2,8 @@ myApp.controller('loginController', [
   '$scope',
   '$state',
   'loginService',
-  function($scope, $state, loginService) {
+  'tokenService',
+  function($scope, $state, loginService, tokenService) {
     $scope.avatarsList = [
       'elephant',
       'giraffe',
@@ -13,6 +14,12 @@ myApp.controller('loginController', [
     ];
 
     $scope.selectedAvatar;
+    var userToken = tokenService.getToken();
+    if (userToken) {
+      tokenService.checkToken(userToken).then(function(response) {
+        console.log(response);
+      });
+    }
     this.onSubmit = function() {
       loginService
         .login($scope.mail, $scope.password, $scope.selectedAvatar)
