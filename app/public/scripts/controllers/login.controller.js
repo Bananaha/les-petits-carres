@@ -16,9 +16,10 @@ myApp.controller('loginController', [
     $scope.selectedAvatar;
     var userToken = tokenService.getToken();
     if (userToken) {
-      tokenService.checkToken(userToken).then(function(response) {
-        console.log(response);
-      });
+      const toto = tokenService.checkToken(userToken);
+      if (toto !== undefined) {
+        $state.go('game');
+      }
     }
     this.onSubmit = function() {
       loginService

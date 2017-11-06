@@ -32,9 +32,8 @@ router
       });
   })
   .post('/checkToken', (req, res) => {
-    roomService.findUserInRoomsById(req.body.token).then(res => {
-      console.log(res);
-    });
+    const userAlreadyLoged = roomService.findUserInRoomsById(req.body.token);
+    res.status(200).send(userAlreadyLoged);
   });
 
 module.exports = router;

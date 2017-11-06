@@ -33,6 +33,7 @@ const findUserInRoomsByMail = mail => {
 };
 
 const findUserInRoomsById = id => {
+  console.log(rooms);
   let target;
   rooms.forEach(room => {
     room.players.forEach(player => {
@@ -41,6 +42,7 @@ const findUserInRoomsById = id => {
       }
     });
   });
+  console.log('target', target);
   return target;
 };
 
