@@ -16,11 +16,13 @@ myApp.controller('loginController', [
     $scope.selectedAvatar;
     var userToken = tokenService.getToken();
     if (userToken) {
-      const toto = tokenService.checkToken(userToken);
+      var toto = tokenService.checkToken(userToken);
       if (toto !== undefined) {
         $state.go('game');
+        return;
       }
     }
+
     this.onSubmit = function() {
       loginService
         .login($scope.mail, $scope.password, $scope.selectedAvatar)

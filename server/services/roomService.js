@@ -20,32 +20,6 @@ const create = () => {
   return newRoom;
 };
 
-const findUserInRoomsByMail = mail => {
-  let target;
-  rooms.forEach(room => {
-    room.players.forEach(player => {
-      if (player.mail === mail) {
-        target = player;
-      }
-    });
-  });
-  return target;
-};
-
-const findUserInRoomsById = id => {
-  console.log(rooms);
-  let target;
-  rooms.forEach(room => {
-    room.players.forEach(player => {
-      if (player.id === id) {
-        target = player;
-      }
-    });
-  });
-  console.log('target', target);
-  return target;
-};
-
 const findRoom = id => {
   return rooms.find(room => {
     return room.id === id;
@@ -83,19 +57,16 @@ const join = user => {
   return availableRoom;
 };
 
-const checkRoom = user => {
-  // vérifier que le joueur a une propriété roomId, si c'est le cas, on retourne l'id de la room à laquelle il dépend
-  if (!user.roomId) {
-    // sinon on le fait entrer dans une room
-    return join(user);
-  } else {
-    return findRoom(user.roomId);
-  }
-};
+// on vérifie si une room a déja le user dans ses players
+// si non alors on en join / créé une
+const checkRoom = user => findRoomByUser(user.id, 'id') || join(user);
+
+// Cherche une room dont au moins un player a le même id / mail que celui recherché
+const findRoomByUser = (userData, key) =>
+  rooms.find(room => room.players.some(player => player[key] === userData));
 
 module.exports = {
   checkRoom,
-  findUserInRoomsByMail,
-  findUserInRoomsById,
+  findRoomByUser,
   findRoom
 };

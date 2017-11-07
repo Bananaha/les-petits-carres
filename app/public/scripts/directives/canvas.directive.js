@@ -150,7 +150,6 @@ myApp.directive('canvas', [
         });
         socketService.on('togglePlayerTurn', function() {
           turn = !turn;
-          console.log('turn', turn);
         });
         draw();
       }

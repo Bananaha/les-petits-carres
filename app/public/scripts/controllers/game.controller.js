@@ -9,13 +9,19 @@ myApp.controller('gameController', [
     socketService.connect();
     var token = tokenService.getToken();
     // dans le cas où l'utilisateur se connecte directement à l'url **/game
-    if (token) {
-      // si un token est enregistré dans le local storage, on vérifie que le token est valide
-      socketService.emit('sendToken', token);
-    } else {
+
+    if (!token) {
       // si l'utilisateur n'a pas de token ou que celui-ci n'est pas valide, il est redirigé vers la page de login
       $state.go('login');
+      return;
     }
+
+    var checkUserToken = tokenService.checkToken(token);
+    console.log(checkUserToken);
+
+    // si un token est enregistré dans le local storage, on vérifie que le token est valide
+    socketService.emit('sendToken', token);
+
     // lorsque le premier jour entre dans la room de jeu, on affiche son mail, l'avatar choisi, la couleur du jour, et un message
     socketService.on('justOneGamer', function(data) {
       $scope.gameMessage = data.message;
