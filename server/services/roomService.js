@@ -2,7 +2,7 @@
 
 const uuidv4 = require('uuid/v4');
 
-const rooms = [];
+let rooms = [];
 const COLORS = ['#FC4349', '#6DBCDB'];
 
 const create = () => {
@@ -31,6 +31,13 @@ const findEmpty = () => {
   return rooms.find(room => {
     return room.full === false;
   });
+};
+
+const deleteRoom = id => {
+  console.log('deleteRoom__id', id);
+  console.log('room before', rooms);
+  rooms = rooms.filter(room => room.id !== id);
+  console.log('room after', rooms);
 };
 
 const join = user => {
@@ -68,5 +75,6 @@ const findRoomByUser = (userData, key) =>
 module.exports = {
   checkRoom,
   findRoomByUser,
-  findRoom
+  findRoom,
+  deleteRoom
 };

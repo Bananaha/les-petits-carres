@@ -5,12 +5,18 @@
       p.game-paragraphe(ng-style="player1 ? player1ColorStyle : false") {{player1}}
       p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer1}}
     .col-1-2
-      canvas#canvas(canvas ng-click="gameController.onClick($event)")
+      i.fa.fa-spinner.fa-spin.fa-5x.fa-fw.spinner(ng-show="onePlayer")
+        span.sr-only Loading...
+      canvas#canvas(canvas ng-click="gameController.onClick($event)" ng-show="!onePlayer")
     .col-1-4
       .img(ng-class="avatarPlayer2+'-img'")
       p.game-paragraphe(ng-style="player2Style") {{player2}}
       p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer2}}
 
-  p.game-message {{gameMessage}}
+  div
+    p.game-message {{gameMessage}}
+      button.reload-button(ng-show="showButton" ng-click="restartGame()")
+        i.fa.fa-refresh.fa-2x(aria-hidden="true")
+
     
     

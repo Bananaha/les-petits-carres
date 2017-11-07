@@ -8,7 +8,8 @@ const socketAction = require('./socketActions');
 const eventTypes = {
   sendToken: 'sendToken',
   canvasClicked: 'canvasClicked',
-  disconnect: 'disconnect'
+  disconnect: 'disconnect',
+  deleteRoom: 'deleteRoom'
 };
 
 function attachDispatcher(socket, io) {
@@ -32,6 +33,9 @@ function dispatchSocketEvent(eventType, { payload, socket, io }) {
       breack;
     case eventTypes.disconnect:
       return disconnectFunction(socket, io);
+      breack;
+    case eventTypes.deleteRoom:
+      return deleteRoomFunction(socket);
       breack;
   }
 }
@@ -131,9 +135,11 @@ const canvasClickedFunction = (data, socket, io) => {
     });
 
     let message = '';
+    // Si le joueur n'a pas reporté de carré, on autorise l'autre joueur a joué
     if (winSquares === 0) {
       gameService.togglePlayerTurn(room);
       io.to(socket.APP_roomId).emit('togglePlayerTurn');
+      // Si le joueur a gagné un carré,
     } else {
       user.score += winSquares;
 
@@ -143,6 +149,7 @@ const canvasClickedFunction = (data, socket, io) => {
           room.players[1],
           socket.APP_roomId
         );
+
         if (room.players[1].score > room.players[0].score) {
           message = room.players[1].mail + ' gagne la partie';
         } else {
@@ -179,6 +186,11 @@ const disconnectFunction = (socket, io) => {
       message: 'Votre adversaire a quitté la partie.'
     });
   }
+};
+
+const deleteRoomFunction = socket => {
+  console.log('in deleteRoomFunction');
+  roomService.deleteRoom(socket.APP_roomId);
 };
 
 module.exports = {

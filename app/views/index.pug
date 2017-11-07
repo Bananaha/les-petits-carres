@@ -4,8 +4,11 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1 shrink-to-fit=no")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
-    title Les petits carrés
+    title Les petits carrés de Claire
+    link(rel="icon" href="assets/favicon.ico")
     link(href="https://fonts.googleapis.com/css?family=Roboto|Sofia" rel="stylesheet")
+    link(rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css")
+
     link(rel="stylesheet", href="/styles/main.css")
     link(rel="stylesheet", href="/styles/avatars.css")
     link(rel="stylesheet", href="/styles/table.css")
@@ -14,7 +17,8 @@ html(lang="en")
 
   body(ng-app="app")
     .header.bg-blue.shadow
-      h1(ui-sref="login") Les petits carrés
+      h1(ui-sref="login") Les petits carrés de
+        span.header-span Claire
       a.header-link(ui-sref="scores") Hall of Fame
     .container(ui-view="")
     noscript

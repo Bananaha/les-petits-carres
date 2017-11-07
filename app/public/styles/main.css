@@ -1,5 +1,5 @@
 body {
-  background: #ffffff;
+  background: #f9f9f9;
   font-family: 'Roboto', sans-serif;
   color: #393939;
 }
@@ -144,4 +144,22 @@ form {
   line-height: 30px;
   color: #4179f7;
   font-size: 18px;
+}
+
+.reload-button {
+  font-size: 16px;
+  color: #ffbe00;
+  background: #f9f9f9;
+  border: none;
+}
+
+.header-span {
+  color: #ffbe00;
+  padding-left: 10px;
+}
+
+.spinner {
+  color: #ffbe00;
+  margin: 0 auto;
+  display: block;
 }
