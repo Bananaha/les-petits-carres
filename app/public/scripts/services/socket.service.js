@@ -3,7 +3,7 @@ myApp.factory('socketService', function($rootScope) {
 
   function connect() {
     if (!socket) {
-      socket = io.connect();
+      socket = io.connect('http://localhost:5000');
     }
     return socket;
   }

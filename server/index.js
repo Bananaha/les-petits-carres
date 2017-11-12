@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const config = require('../config')['development'];
+
 const dbService = require('./services/dbService');
 const login = require('./routes/login');
 const scores = require('./routes/scores');
@@ -8,9 +10,10 @@ const templates = require('./routes/templates');
 
 const app = express();
 
-const HOST = 'localhost';
-const PORT = 5000;
-const URL = 'mongodb://' + HOST + ':27017/littleSquares';
+const HOST = config.database.host;
+const PORT = config.database.port;
+const dbName = config.database.db;
+const URL = 'mongodb://' + HOST + ':27017/' + dbName;
 
 app
   .set('view engine', 'pug')
@@ -23,7 +26,7 @@ app
     res.render('index');
   });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(config.server.port, () => {
   console.log('connecté');
 });
 

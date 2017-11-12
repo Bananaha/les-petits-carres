@@ -48,7 +48,7 @@ const join = user => {
   const color = COLORS[availableRoom.players.length];
   user.roomId = availableRoom.id;
   user.color = color;
-  user.score = 49;
+  user.score = 0;
 
   //ajout du joueur à la room
   availableRoom.players.push(user);
