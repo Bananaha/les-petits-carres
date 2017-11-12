@@ -2,7 +2,10 @@ myApp.factory('socketService', function($rootScope) {
   var socket;
 
   function connect() {
-    return (socket = io.connect());
+    if (!socket) {
+      socket = io.connect();
+    }
+    return socket;
   }
 
   function on(eventName, callback) {

@@ -1,22 +1,30 @@
 .container
-  .grid
-    .col-1-4
-      .img(ng-class="avatarPlayer1+'-img'")
-      p.game-paragraphe(ng-style="player1 ? player1ColorStyle : false") {{player1}}
-      p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer1}}
-    .col-1-2
-      i.fa.fa-spinner.fa-spin.fa-5x.fa-fw.spinner(ng-show="onePlayer")
-        span.sr-only Loading...
-      canvas#canvas(canvas ng-click="gameController.onClick($event)" ng-show="!onePlayer")
-    .col-1-4
-      .img(ng-class="avatarPlayer2+'-img'")
-      p.game-paragraphe(ng-style="player2Style") {{player2}}
-      p.game-paragraphe.score-paragraphe(ng-style="player1Style") {{scorePlayer2}}
-
-  div
+  .grid.rules-container(ng-show="showRules")
+    .col-1
+      h3 RÈGLE DU JEU "LES PETITS CARRÉS"
+      p.rules-text Sur l'aire de jeu, les joueurs tracent, à tour de rôle,  le côté d'un carré (bordures incluses). Celui qui trace le dernier côté (celui qui ferme le carré) gagne le carré. Le joueur qui ferme un carré a le droit de rejouer immédiatement. Le but du jeu est de tracer le plus grand nombre de carrés en empêchant son adversaire d'en faire autant. Celui qui à la fin du jeu a obtenu le plus grand nombre de carrés est déclaré vainqueur.
+  .game-message-container
     p.game-message {{gameMessage}}
       button.reload-button(ng-show="showButton" ng-click="restartGame()")
         i.fa.fa-refresh.fa-2x(aria-hidden="true")
+  .grid
+    .col-1-4
+      .img(ng-class="avatarPlayer1+'-img'")
+      p.game-paragraphe {{player1}}
+      p.game-paragraphe.score-paragraphe {{scorePlayer1}}
+    .col-1-2
+      .spinner-container(ng-show="onePlayer")
+        i.fa.fa-spinner.fa-spin.fa-5x.fa-fw.spinner
+          span.sr-only Loading...
+      canvas#canvas(canvas ng-click="gameController.onClick($event)" ng-show="!onePlayer")
+    .col-1-4
+      .img(ng-class="avatarPlayer2+'-img'")
+      p.game-paragraphe {{player2}}
+      p.game-paragraphe.score-paragraphe {{scorePlayer2}}
+  .grid 
+    .game-message-container
+      p.game-message.pointer(ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()") Règles du jeu
+
 
     
     

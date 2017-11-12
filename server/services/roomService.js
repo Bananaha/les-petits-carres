@@ -34,10 +34,7 @@ const findEmpty = () => {
 };
 
 const deleteRoom = id => {
-  console.log('deleteRoom__id', id);
-  console.log('room before', rooms);
   rooms = rooms.filter(room => room.id !== id);
-  console.log('room after', rooms);
 };
 
 const join = user => {

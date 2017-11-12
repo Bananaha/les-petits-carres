@@ -7,8 +7,8 @@ myApp.factory('scoresService', [
         .then(function(res) {
           return res.data;
         })
-        .catch(function() {
-          console.log('erreur dans la requete des scores');
+        .catch(function(error) {
+          console.log('erreur dans la requete des scores', error);
         });
     }
     function extractUsers(usersInformations) {

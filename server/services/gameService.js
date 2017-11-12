@@ -66,9 +66,9 @@ const firstToPlay = (room, user) => {
     player.turnToPlay = firstToPlayRandom === index;
   });
   if (user.turnToPlay) {
-    return user.mail;
+    return user;
   } else {
-    return room.players[0].mail;
+    return room.players[0];
   }
 };
 
@@ -219,6 +219,22 @@ const saveScores = (user1, user2, id) => {
   userService.updateScores(finalScores);
 };
 
+const computeStartedGameData = (game, socket, message, destIsSocket) => {
+  const player1 = destIsSocket ? socket.APP_user : socket.APP_opponent;
+  const player2 = destIsSocket ? socket.APP_opponent : socket.APP_user;
+  return {
+    coord: game.coord,
+    squares: game.squares,
+    player2: player2.mail,
+    scorePlayer2: player2.score,
+    avatarPlayer2: player2.avatar,
+    player1: player1.mail,
+    scorePlayer1: player1.score,
+    avatarPlayer1: player1.avatar,
+    message
+  };
+};
+
 module.exports = {
   getOrCreate,
   random,
@@ -229,5 +245,6 @@ module.exports = {
   changeSquareProps,
   findAttachedSquare,
   saveScores,
-  getById
+  getById,
+  computeStartedGameData
 };

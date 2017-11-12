@@ -2,7 +2,8 @@ myApp.controller('scoresController', [
   '$scope',
   '$state',
   'scoresService',
-  function($scope, $state, scoresService) {
+  'socketService',
+  function($scope, $state, scoresService, socketService) {
     var usersInformations;
 
     $scope.computeScores = function() {

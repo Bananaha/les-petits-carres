@@ -17,8 +17,6 @@ myApp.controller('gameController', [
     }
 
     var checkUserToken = tokenService.checkToken(token);
-    console.log(checkUserToken);
-
     // si un token est enregistré dans le local storage, on vérifie que le token est valide
     socketService.emit('sendToken', token);
 
@@ -26,9 +24,6 @@ myApp.controller('gameController', [
     socketService.on('justOneGamer', function(data) {
       $scope.gameMessage = data.message;
       $scope.player1 = data.player1;
-      $scope.player1ColorStyle = {
-        color: data.color
-      };
       $scope.avatarPlayer1 = data.avatarPlayer1;
       $scope.onePlayer = true;
     });
@@ -36,8 +31,8 @@ myApp.controller('gameController', [
     socketService.on('initGame', function(data) {
       $scope.player1 = data.player1;
       $scope.avatarPlayer1 = data.avatarPlayer1;
-      $scope.scorePlayer1 = 0;
-      $scope.scorePlayer2 = 0;
+      $scope.scorePlayer1 = data.player1.scorePlayer1;
+      $scope.scorePlayer2 = data.player2.scorePlayer2;
       $scope.player2 = data.player2;
       $scope.avatarPlayer2 = data.avatarPlayer2;
       $scope.gameMessage = data.message;
@@ -61,6 +56,12 @@ myApp.controller('gameController', [
     $scope.restartGame = function() {
       socketService.emit('deleteRoom');
       $state.reload();
+    };
+    $scope.hoverIn = function() {
+      $scope.showRules = true;
+    };
+    $scope.hoverOut = function() {
+      $scope.showRules = false;
     };
   }
 ]);

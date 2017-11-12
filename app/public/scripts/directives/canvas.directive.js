@@ -33,7 +33,7 @@ myApp.directive('canvas', [
           this.fenceBottom = false;
           this.fenceLeft = false;
           this.isComplete = false;
-          this.color = 'yellow';
+          this.color = '#ffbe00';
 
           this.render = function() {
             this.context.fillStyle = this.color;
@@ -112,6 +112,17 @@ myApp.directive('canvas', [
           });
         });
 
+        socketService.on('setGame', function(game) {
+          if (game.fences.length > 0) {
+            game.fences.forEach(function(fence) {
+              var newFence = new Fence(fence.x, fence.y, fence.w, fence.h);
+
+              fencesArray.push(newFence);
+            });
+          }
+          updateSquare(game.squares);
+        });
+
         socketService.on('turn', function(data) {
           turn = data.turn;
         });
@@ -136,13 +147,11 @@ myApp.directive('canvas', [
         );
 
         socketService.on('allowToPlay', function(data) {
-          console.log('data', data);
           var fence = new Fence(
             data.fenceConfig.x,
             data.fenceConfig.y,
             data.fenceConfig.w,
-            data.fenceConfig.h,
-            data.fenceConfig.color
+            data.fenceConfig.h
           );
 
           fencesArray.push(fence);

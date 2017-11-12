@@ -41,12 +41,20 @@ function dispatchSocketEvent(eventType, { payload, socket, io }) {
 }
 
 const sendTokenFunction = async (token, socket, io) => {
-  const user = await userService.findById(token);
+  let user;
+  if (socket.APP_user) {
+    user = socket.APP_user;
+  } else {
+    user = await userService.findById(token);
+  }
   const room = roomService.checkRoom(user);
+  user = room.players.find(player => player.id === user.id);
+  if (!socket.APP_user) {
+    socket.APP_user = user;
+  }
   socket.join(room.id);
   const game = gameService.getOrCreate(room.id);
   socket.APP_roomId = room.id;
-  socket.APP_user = user;
 
   const firstConnexionInfos = {
     player1: user.mail,
@@ -57,36 +65,70 @@ const sendTokenFunction = async (token, socket, io) => {
 
   if (room.players.length < 2) {
     socket.emit('justOneGamer', firstConnexionInfos);
-  } else {
-    const beginner = gameService.firstToPlay(room, user);
-
-    socket.emit('turn', {
-      turn: user.turnToPlay
-    });
-    socket.broadcast.to(room.id).emit('turn', {
-      turn: room.players[0].turnToPlay
-    });
-
-    const secondConnexionInfos = {
-      coord: game.coord,
-      squares: game.squares,
-      player1: room.players[0].mail,
-      scorePlayer1: room.players[0].score,
-      avatarPlayer1: room.players[0].avatar,
-      player2: user.mail,
-      scorePlayer2: user.score,
-      avatarPlayer2: user.avatar,
-      message: beginner + ' commence à jouer'
-    };
-
-    io.to(room.id).emit('initGame', secondConnexionInfos);
+    return;
   }
+  let message;
+  let playingUser;
+
+  socket.APP_opponent = userService.findOpponent(socket.APP_user.id);
+
+  const secondConnexionInfos = {
+    coord: game.coord,
+    squares: game.squares,
+    player2: socket.APP_opponent.mail,
+    scorePlayer2: socket.APP_opponent.score,
+    avatarPlayer2: socket.APP_opponent.avatar,
+    player1: socket.APP_user.mail,
+    scorePlayer1: socket.APP_user.score,
+    avatarPlayer1: socket.APP_user.avatar
+  };
+
+  if (!game.initialized) {
+    playingUser = gameService.firstToPlay(room, user);
+    game.playingUser = playingUser.id;
+    message = playingUser.mail + ' commence à jouer';
+
+    socket.broadcast.to(room.id).emit('turn', {
+      turn: socket.APP_opponent.turnToPlay
+    });
+    socket.broadcast
+      .to(room.id)
+      .emit(
+        'initGame',
+        gameService.computeStartedGameData(game, socket, message, false)
+      );
+    socket.emit(
+      'initGame',
+      gameService.computeStartedGameData(game, socket, message, true)
+    );
+  } else {
+    socket.APP_user.turnToPlay = game.playingUser === user.id;
+    const playingUserMail = socket.APP_user.turnToPlay
+      ? user.mail
+      : socket.APP_opponent.mail;
+    message = "C'est à " + playingUserMail + ' de jouer';
+    socket.emit(
+      'initGame',
+      gameService.computeStartedGameData(game, socket, message, true)
+    );
+  }
+
+  game.initialized = true;
+  socket.emit('turn', {
+    turn: socket.APP_user.turnToPlay
+  });
+  socket.emit('setGame', {
+    fences: game.fences,
+    squares: game.squares
+  });
 };
 
 const canvasClickedFunction = (data, socket, io) => {
   const user = socket.APP_user;
   const room = roomService.findRoom(socket.APP_roomId);
   const game = gameService.getById(socket.APP_roomId);
+
+  socket.APP_opponent = userService.findOpponent(socket.APP_user.id);
   const fenceConfig = {};
   if (!user.turnToPlay) {
     return;
@@ -139,57 +181,75 @@ const canvasClickedFunction = (data, socket, io) => {
     if (winSquares === 0) {
       gameService.togglePlayerTurn(room);
       io.to(socket.APP_roomId).emit('togglePlayerTurn');
+      game.playingUser = socket.APP_opponent.id;
+      message = `C'est à ${socket.APP_opponent.mail} de jouer`;
       // Si le joueur a gagné un carré,
     } else {
       user.score += winSquares;
+      message = `C'est toujours à ${socket.APP_user.mail} de jouer`;
 
-      if (room.players[1].score + room.players[0].score === 100) {
+      if (socket.APP_user.score + socket.APP_opponent.score === 100) {
         gameService.saveScores(
-          room.players[0],
-          room.players[1],
+          socket.APP_opponent,
+          socket.APP_user,
           socket.APP_roomId
         );
 
-        if (room.players[1].score > room.players[0].score) {
-          message = room.players[1].mail + ' gagne la partie';
+        if (socket.APP_user.score === socket.APP_opponent.score) {
+          message = 'Match nul';
         } else {
-          if (room.players[1].score === room.players[0].score) {
-            message = 'Match nul';
-          } else {
-            message = room.players[0].mail + ' gagne la partie';
-          }
+          message =
+            (socket.APP_user.score > socket.APP_opponent.score
+              ? socket.APP_user.mail
+              : socket.APP_opponent.mail) + ' gagne la partie';
         }
+
+        io.to(socket.APP_roomId).emit('turn', {
+          turn: false
+        });
       }
     }
 
     const gameUpdateDatas = {
       fenceConfig,
       squaresChanged,
-      scorePlayer1: room.players[0].score,
-      scorePlayer2: room.players[1].score,
-      message: message
+      message
     };
 
-    io.to(socket.APP_roomId).emit('allowToPlay', gameUpdateDatas);
+    socket.emit(
+      'allowToPlay',
+      Object.assign(
+        {
+          scorePlayer1: socket.APP_user.score,
+          scorePlayer2: socket.APP_opponent.score
+        },
+        gameUpdateDatas
+      )
+    );
+
+    socket.broadcast.to(socket.APP_roomId).emit(
+      'allowToPlay',
+      Object.assign(
+        {
+          scorePlayer1: socket.APP_opponent.score,
+          scorePlayer2: socket.APP_user.score
+        },
+        gameUpdateDatas
+      )
+    );
   }
 };
 const disconnectFunction = (socket, io) => {
   const user = socket.APP_user;
   const room = roomService.findRoom(socket.APP_roomId);
   const game = gameService.getById(socket.APP_roomId);
-  if (!room) {
-    socket.to(socket.APP_roomId).emit('disconnected');
-    return;
-  }
-  if (room.players.length === 2) {
-    socket.to(socket.APP_roomId).emit('disconnected', {
-      message: 'Votre adversaire a quitté la partie.'
-    });
-  }
+
+  socket.to(socket.APP_roomId).emit('disconnected', {
+    message: 'Votre adversaire a quitté la partie.'
+  });
 };
 
 const deleteRoomFunction = socket => {
-  console.log('in deleteRoomFunction');
   roomService.deleteRoom(socket.APP_roomId);
 };
 

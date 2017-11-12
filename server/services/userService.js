@@ -114,9 +114,17 @@ const login = async ({ mail, password, avatar }) => {
   return user;
 };
 
+const findOpponent = userId => {
+  const room = roomService.findRoomByUser(userId, 'id');
+  return room.players.find(player => {
+    return player.id !== userId;
+  });
+};
+
 module.exports = {
   login,
   findById,
   updateScores,
+  findOpponent,
   findAll
 };
