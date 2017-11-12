@@ -34,7 +34,7 @@ Quick start
 - node
 
 ```
-node run server
+node server/**
 ```
 
 
