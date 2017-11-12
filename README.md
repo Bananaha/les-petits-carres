@@ -26,13 +26,7 @@ Quick start
 
 **Avant de commencer**
 
-```javascript
-
-// remplacer les variables d'environnement présentes dans `/server/index.js`
-
-const HOST = 'localhost';
-const PORT = 5000;
-```
+>- Modifier le fichier congif.js à la racine du projet
 
 
 **Lancer le projet**
@@ -41,11 +35,6 @@ const PORT = 5000;
 
 ```
 node run server
-```
-- mongo
-
-```
-cd Path to mongo /bin/mongod --dbpath
 ```
 
 
