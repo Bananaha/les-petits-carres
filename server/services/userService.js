@@ -4,6 +4,18 @@ const uuidv4 = require('uuid/v4');
 const roomService = require('./roomService');
 const dbService = require('./dbService');
 
+const connectedUsers = {};
+
+const connect = id => {
+  connectedUsers[id] = true;
+};
+
+const disconnect = id => {
+  delete connectedUsers[id];
+};
+
+const isConnected = id => connectedUsers[id];
+
 // créer un joueur s'il n'existe pas dans la base de données
 const create = props => {
   return dbService
@@ -89,13 +101,11 @@ const login = async ({ mail, password, avatar }) => {
   }
 
   if (user && user.password !== password) {
-    const message = 'wrong credentials';
-    return message;
+    return 'wrong credentials';
   }
 
-  if (user && roomService.findRoomByUser(user.mail, 'mail')) {
-    const message = 'user already in game';
-    return message;
+  if (user && isConnected(user.id)) {
+    return 'user already in game';
   }
 
   updateAvatar({ mail, avatar });
@@ -126,5 +136,8 @@ module.exports = {
   findById,
   updateScores,
   findOpponent,
-  findAll
+  findAll,
+  connect,
+  disconnect,
+  isConnected
 };

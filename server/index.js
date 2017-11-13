@@ -26,9 +26,7 @@ app
     res.render('index');
   });
 
-const server = app.listen(config.server.port, () => {
-  console.log('connecté');
-});
+const server = app.listen(config.server.port);
 
 const io = require('socket.io')(server);
 const socketServer = require('./services/socket')(io);

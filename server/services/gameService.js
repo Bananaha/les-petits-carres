@@ -235,6 +235,10 @@ const computeStartedGameData = (game, socket, message, destIsSocket) => {
   };
 };
 
+const deleteGame = id => {
+  delete games[id];
+};
+
 module.exports = {
   getOrCreate,
   random,
@@ -246,5 +250,6 @@ module.exports = {
   findAttachedSquare,
   saveScores,
   getById,
-  computeStartedGameData
+  computeStartedGameData,
+  deleteGame
 };

@@ -47,6 +47,12 @@ const sendTokenFunction = async (token, socket, io) => {
   } else {
     user = await userService.findById(token);
   }
+  if (!user) {
+    socket.disconnect();
+    return;
+  }
+  userService.connect(user.id);
+
   const room = roomService.checkRoom(user);
   user = room.players.find(player => player.id === user.id);
   if (!socket.APP_user) {
@@ -207,6 +213,7 @@ const canvasClickedFunction = (data, socket, io) => {
         io.to(socket.APP_roomId).emit('turn', {
           turn: false
         });
+        deleteRoomFunction(socket);
       }
     }
 
@@ -241,8 +248,13 @@ const canvasClickedFunction = (data, socket, io) => {
 };
 const disconnectFunction = (socket, io) => {
   const user = socket.APP_user;
+  if (!user || !user.id) {
+    return;
+  }
+
   const room = roomService.findRoom(socket.APP_roomId);
   const game = gameService.getById(socket.APP_roomId);
+  userService.disconnect(user.id);
 
   socket.to(socket.APP_roomId).emit('disconnected', {
     message: 'Votre adversaire a quitté la partie.'
@@ -250,7 +262,9 @@ const disconnectFunction = (socket, io) => {
 };
 
 const deleteRoomFunction = socket => {
+  console.log('coucou');
   roomService.deleteRoom(socket.APP_roomId);
+  gameService.deleteGame(socket.APP_roomId);
 };
 
 module.exports = {
