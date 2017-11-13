@@ -262,7 +262,6 @@ const disconnectFunction = (socket, io) => {
 };
 
 const deleteRoomFunction = socket => {
-  console.log('coucou');
   roomService.deleteRoom(socket.APP_roomId);
   gameService.deleteGame(socket.APP_roomId);
 };
